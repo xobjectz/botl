@@ -7,8 +7,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "botl"
-description = "python3 irc bot"
-version = "100"
+description = "cli library"
+version = "101"
 authors = [
     {name = "Bart Thate",email = "objx@proton.me"},
 ]
