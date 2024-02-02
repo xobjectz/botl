@@ -9,11 +9,21 @@
 import inspect
 
 
+from objx import Object
+
 from .command import Command
-from .objects import Object
 from .parsers import spl
 from .storage import Storage
 from .threads import launch
+
+
+def __dir__():
+    return (
+        'scan',
+    )
+
+
+__all__ = __dir__()
 
 
 def scan(pkg, modstr, initer=False, disable="", wait=True) -> []:

@@ -166,8 +166,8 @@ import _thread
 
 
 from objx import Object
-from botl import Broker, Command, Default, Error, Event, Handler, Storage
-from botl import cdir, debug, launch, parse_cmd, spl
+from botl import Broker, Client, Command, Default, Error, Event, Handler, Storage
+from botl import cdir, cmnd, debug, forever, launch, parse_cmd, scan, spl
 
 
 def __dir__():
@@ -205,23 +205,6 @@ else:
     mods = None
 
 
-class Client(Handler):
-
-    def __init__(self):
-        Handler.__init__(self)
-        self.register("command", Command.handle)
-        Broker.add(self)
-
-    def announce(self, txt):
-        self.raw(txt)
-
-    def say(self, channel, txt):
-        self.raw(txt)
-
-    def raw(self, txt):
-        pass
-
-
 class Console(Client):
 
     def announce(self, txt):
@@ -241,14 +224,6 @@ class Console(Client):
     def say(self, channel, txt):
         txt = txt.encode('utf-8', 'replace').decode()
         print(txt)
-
-
-def cmnd(txt):
-    evn = Event()
-    evn.txt = txt
-    Command.handle(evn)
-    evn.wait()
-    return evn
 
 
 def daemon(pidfile, verbose=False):
@@ -282,44 +257,10 @@ def daemoned():
     forever()
 
 
-def forever():
-    while 1:
-        try:
-            time.sleep(1.0)
-        except (KeyboardInterrupt, EOFError):
-            _thread.interrupt_main()
-
-
-
-
 def privileges(username):
     pwnam = pwd.getpwnam(username)
     os.setgid(pwnam.pw_gid)
     os.setuid(pwnam.pw_uid)
-
-
-def scan(pkg, modstr, initer=False, disable="", wait=True) -> []:
-    mds = []
-    for modname in spl(modstr):
-        if modname in spl(disable):
-            continue
-        module = getattr(pkg, modname, None)
-        if not module:
-            continue
-        for _key, cmd in inspect.getmembers(module, inspect.isfunction):
-            if 'event' in cmd.__code__.co_varnames:
-                Command.add(cmd)
-        for _key, clz in inspect.getmembers(module, inspect.isclass):
-            if not issubclass(clz, Object):
-                continue
-            Storage.add(clz)
-        if initer and "init" in dir(module):
-            module._thr = launch(module.init, name=f"init {modname}")
-            mds.append(module)
-    if wait and initer:
-        for mod in mds:
-            mod._thr.join()
-    return mds
 
 
 def wrap(func):
@@ -337,9 +278,6 @@ def wrap(func):
             termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old2)
 
 
-"runtime"
-
-
 def main():
     readline.redisplay()
     Storage.skel()
@@ -351,16 +289,16 @@ def main():
         debug(f"{Cfg.name.upper()} {Cfg.opts.upper()} started {dte}")
     if "d" in Cfg.opts:
         daemoned()
-    csl = Console()
     if "h" in Cfg.opts:
         return print(__doc__)
     if "c" in Cfg.opts:
-        scan(mods, Cfg.mod, True, Cfg.sets.dis, True)
+        scan(mods, Cfg.mod, Cfg.hasmods, Cfg.sets.dis, Cfg.hasmods)
+        csl = Console()
         csl.start()
         forever()
     if Cfg.otxt:
         scan(mods, Cfg.mod)
-        return cmnd(Cfg.otxt)
+        return cmnd(Cfg.otxt, print)
 
 
 def wrapped():
