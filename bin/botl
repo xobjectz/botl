@@ -1,0 +1,372 @@
+#!/usr/bin/env python3
+# This file is placed in the Public Domain.
+#
+# pylint: disable=C,R,W0212,W0611,W0613,W0105,E0401,E0402
+
+
+"""python3 irc bot
+
+BOTL is a python3 irc bot, it can connect to IRC, fetch and display RSS
+feeds, take todo notes, keep a shopping list and log text. You can also
+copy/paste the service file and run it under systemd for 24/7 presence
+in a IRC channel.
+
+BOTL has all the python3 code to program a unix cli program, such as
+disk perisistence for configuration files, event handler to
+handle the client/server connection, code to introspect modules
+for commands, deferred exception handling to not crash on an
+error, a parser to parse commandline options and values, etc.
+
+BOTL provides an botl.objects module that allows for easy json save//load
+to/from disk of objects. It provides an "clean namespace" Object class
+that only has dunder methods, so the namespace is not cluttered with
+method names. This makes storing and reading to/from json possible.
+
+BOTL is Public Domain.
+
+SYNOPSIS
+
+    botl <cmd> [key=val] [key==val]
+    botl [-a] [-c] [-d] [-h] [-v] 
+
+USAGE
+
+without any argument the program does nothing
+
+    $ botl
+    $
+
+
+see list of commands
+
+    $ botl cmd
+    cmd,err,mod,req,thr,ver
+
+
+list of modules
+
+    $ botl mod
+    cmd,err,fnd,irc,log,mod,req,rss,tdo,thr
+
+
+use mod=<name1,name2> to load additional modules
+
+    $ botl cfg mod=irc
+
+
+start a console
+
+    $ botl -c mod=irc,rss
+    >
+
+
+use -v for verbose
+
+    $ botl -cv mod=irc
+    BOTL started CV started Sat Dec 2 17:53:24 2023
+    >
+
+
+start daemon
+
+    $ botl -d
+    $ 
+
+CONFIGURATION
+
+irc
+
+    $ botl cfg server=<server>
+    $ botl cfg channel=<channel>
+    $ botl cfg nick=<nick>
+
+sasl
+
+    $ botl pwd <nsvnick> <nspass>
+    $ botl cfg password=<frompwd>
+
+rss
+
+    $ botl rss <url>
+    $ botl dpl <url> <item1,item2>
+    $ botl rem <url>
+    $ botl nme <url> <name>
+
+COMMANDS
+
+    cmd - commands
+    cfg - irc configuration
+    dlt - remove a user
+    dpl - sets display items
+    fnd - find objects 
+    log - log some text
+    met - add a user
+    mre - displays cached output
+    pwd - sasl nickserv name/pass
+    rem - removes a rss feed
+    req - reconsider
+    rss - add a feed
+    thr - show the running threads
+
+SYSTEMD
+
+save the following it in /etc/systems/system/botl.service and
+replace "<user>" with the user running pipx
+
+    [Unit]
+    Description=python3 irc bot
+    Requires=network-online.target
+    After=network-online.target
+
+    [Service]
+    Type=simple
+    User=<user>
+    Group=<user>
+    WorkingDirectory=/home/<user>/.botl
+    ExecStart=/home/<user>/.local/pipx/venvs/botl/bin/botl -d
+    RemainAfterExit=yes
+
+    [Install]
+    WantedBy=multi-user.target
+
+then run this
+
+    $ mkdir ~/.botl
+    $ sudo systemctl enable botl --now
+
+default channel/server is #botl on localhost
+
+FILES
+
+    ~/.botl
+    ~/.local/bin/botl
+    ~/.local/pipx/venvs/botl/
+
+AUTHOR
+
+    Bart Thate <objx@proton.me>
+
+COPYRIGHT
+
+    BOTL is Public Domain.
+
+"""
+
+
+import getpass
+import inspect
+import objx
+import os
+import pwd
+import readline
+import sys
+import termios
+import time
+import _thread
+
+
+from objx import Object
+from botl import Broker, Command, Default, Error, Event, Handler, Storage
+from botl import cdir, debug, launch, parse_cmd, spl
+
+
+def __dir__():
+    return (
+        'Cfg',
+        'Console',
+        "Client",
+        'cmnd',
+        'daemon',
+        'daemoned',
+        'forever',
+        'main',
+        'privileges',
+        'scan',
+        'wrap',
+        'wrapped'
+    )
+
+
+__all__ = __dir__()
+
+
+Cfg         = Default()
+Cfg.mod     = "cmd,irc,rss,mod"
+Cfg.name    = "botl"
+Cfg.wd      = os.path.expanduser(f"~/.{Cfg.name}")
+Cfg.pidfile = os.path.join(Cfg.wd, f"{Cfg.name}.pid")
+Cfg.user    = getpass.getuser()
+Storage.wd  = Cfg.wd
+
+
+if os.path.exists("mods"):
+    import mods
+else:
+    mods = None
+
+
+class Client(Handler):
+
+    def __init__(self):
+        Handler.__init__(self)
+        self.register("command", Command.handle)
+        Broker.add(self)
+
+    def announce(self, txt):
+        self.raw(txt)
+
+    def say(self, channel, txt):
+        self.raw(txt)
+
+    def raw(self, txt):
+        pass
+
+
+class Console(Client):
+
+    def announce(self, txt):
+        pass
+
+    def callback(self, evt):
+        Client.callback(self, evt)
+        evt.wait()
+
+    def poll(self):
+        evt = Event()
+        evt.orig = object.__repr__(self)
+        evt.txt = input("> ")
+        evt.type = "command"
+        return evt
+
+    def say(self, channel, txt):
+        txt = txt.encode('utf-8', 'replace').decode()
+        print(txt)
+
+
+def cmnd(txt):
+    evn = Event()
+    evn.txt = txt
+    Command.handle(evn)
+    evn.wait()
+    return evn
+
+
+def daemon(pidfile, verbose=False):
+    pid = os.fork()
+    if pid != 0:
+        os._exit(0)
+    os.setsid()
+    pid2 = os.fork()
+    if pid2 != 0:
+        os._exit(0)
+    if not verbose:
+        with open('/dev/null', 'r', encoding="utf-8") as sis:
+            os.dup2(sis.fileno(), sys.stdin.fileno())
+        with open('/dev/null', 'a+', encoding="utf-8") as sos:
+            os.dup2(sos.fileno(), sys.stdout.fileno())
+        with open('/dev/null', 'a+', encoding="utf-8") as ses:
+            os.dup2(ses.fileno(), sys.stderr.fileno())
+    os.umask(0)
+    os.chdir("/")
+    if os.path.exists(pidfile):
+        os.unlink(pidfile)
+    cdir(os.path.dirname(pidfile))
+    with open(pidfile, "w", encoding="utf-8") as fds:
+        fds.write(str(os.getpid()))
+
+
+def daemoned():
+    daemon(Cfg.pidfile)
+    privileges(Cfg.user)
+    scan(mods, Cfg.mod, True)
+    forever()
+
+
+def forever():
+    while 1:
+        try:
+            time.sleep(1.0)
+        except (KeyboardInterrupt, EOFError):
+            _thread.interrupt_main()
+
+
+
+
+def privileges(username):
+    pwnam = pwd.getpwnam(username)
+    os.setgid(pwnam.pw_gid)
+    os.setuid(pwnam.pw_uid)
+
+
+def scan(pkg, modstr, initer=False, disable="", wait=True) -> []:
+    mds = []
+    for modname in spl(modstr):
+        if modname in spl(disable):
+            continue
+        module = getattr(pkg, modname, None)
+        if not module:
+            continue
+        for _key, cmd in inspect.getmembers(module, inspect.isfunction):
+            if 'event' in cmd.__code__.co_varnames:
+                Command.add(cmd)
+        for _key, clz in inspect.getmembers(module, inspect.isclass):
+            if not issubclass(clz, Object):
+                continue
+            Storage.add(clz)
+        if initer and "init" in dir(module):
+            module._thr = launch(module.init, name=f"init {modname}")
+            mds.append(module)
+    if wait and initer:
+        for mod in mds:
+            mod._thr.join()
+    return mds
+
+
+def wrap(func):
+    old2 = None
+    try:
+        old2 = termios.tcgetattr(sys.stdin.fileno())
+    except termios.error:
+        pass
+    try:
+        func()
+    except (KeyboardInterrupt, EOFError):
+        print("")
+    finally:
+        if old2:
+            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old2)
+
+
+"runtime"
+
+
+def main():
+    readline.redisplay()
+    Storage.skel()
+    parse_cmd(Cfg, " ".join(sys.argv[1:]))
+    if "a" in Cfg.opts:
+        Cfg.mod = ",".join(mods.__dir__())
+    if "v" in Cfg.opts:
+        dte = time.ctime(time.time()).replace("  ", " ")
+        debug(f"{Cfg.name.upper()} {Cfg.opts.upper()} started {dte}")
+    if "d" in Cfg.opts:
+        daemoned()
+    csl = Console()
+    if "h" in Cfg.opts:
+        return print(__doc__)
+    if "c" in Cfg.opts:
+        scan(mods, Cfg.mod, True, Cfg.sets.dis, True)
+        csl.start()
+        forever()
+    if Cfg.otxt:
+        scan(mods, Cfg.mod)
+        return cmnd(Cfg.otxt)
+
+
+def wrapped():
+    wrap(main)
+    Error.show()
+
+
+if __name__ == "__main__":
+    wrapped()

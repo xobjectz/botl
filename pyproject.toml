@@ -1,0 +1,38 @@
+[build-system]
+requires = [
+    "setuptools>=43.0.0",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "botl"
+description = "python3 irc bot"
+version = "100"
+authors = [
+    {name = "Bart Thate",email = "objx@proton.me"},
+]
+readme = "README.rst"
+license = {text="Public Domain"}
+dependencies = [
+    "objx",
+]
+classifiers = [ 
+    'Development Status :: 3 - Alpha',
+    'License :: Public Domain',
+    'Operating System :: Unix',
+    'Programming Language :: Python',
+    'Topic :: Utilities'
+]
+
+[project.urls]
+"home" = "https://pypi.org/project/botl"
+"bugs" = "https://github.com/xobjectz/botl/issues"
+"source" = "https://github.com/xobjectz/botl"
+
+[tool.setuptools]
+
+packages = [
+    "botl",
+]
+zip-safe=true
