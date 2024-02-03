@@ -12,7 +12,8 @@ import time
 import types
 
 
-from objx import Object
+from .excepts import Error
+from .objects import Object
 
 
 def __dir__():
@@ -52,7 +53,12 @@ class Thread(threading.Thread):
 
     def run(self):
         func, args = self.queue.get()
-        self._result = func(*args)
+        try:
+            self._result = func(*args)
+        except Exception as exc:
+            Error.add(exc)
+            if args and "ready" in dir(args[0]):
+                args[0].ready()
 
 
 class Timer(Object):

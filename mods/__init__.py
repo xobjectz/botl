@@ -1,12 +1,10 @@
 # This file is placed in the Public Domain.
 #
 # pylint: disable=C,R
+# flake8: noqa
 
 
 "modules"
-
-
-import sys
 
 
 from . import cmd, err, fnd, irc, log, mod, rss, rst, tdo, thr, tmr, udp

@@ -41,7 +41,7 @@ def popen(txt):
 
 def main():
     popen("rm -fRv DEAD* build dist MANIFEST *.egg-info *.whl")
-    popen("rm -fRv .pytest_cache .test __pycache__")
+    popen("rm -fRv .pytest_cache .test __pycache__ .ruff_cache")
     popen("rm -fRv lib/*.egg-info")
     popen("rm -fRv .*~ *~")
     if "-f" in sys.argv:

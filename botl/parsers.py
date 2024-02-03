@@ -68,7 +68,7 @@ def extract_date(daystr):
     for fmt in year_formats:
         try:
             res = ttime.mktime(ttime.strptime(daystr, fmt))
-        except:
+        except ValueError:
             res = None
         if res:
             return res
@@ -91,7 +91,7 @@ def get_day(daystr):
     try:
         ymdre = re.search(r'(\d+)-(\d+)-(\d+)', daystr)
         (day, month, yea) = ymdre.groups()
-    except:
+    except ValueError:
         try:
             ymre = re.search(r'(\d+)-(\d+)', daystr)
             (day, month) = ymre.groups()

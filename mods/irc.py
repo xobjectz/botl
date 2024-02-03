@@ -224,14 +224,15 @@ class IRC(Client, Output):
             time.sleep(2.0)
 
     def disconnect(self):
+        # flake8: noqa
         try:
             self.sock.shutdown(2)
         except (
                 ssl.SSLError,
                 OSError,
                 BrokenPipeError
-               ) as ex:
-            pass
+               ) as ex:  
+               s
         except Exception as ex:
             Error.errors.append(ex)
 
