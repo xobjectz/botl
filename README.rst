@@ -1,9 +1,12 @@
 NAME
 
+::
+
     BOTL - cli library
 
 DESCRIPTION
 
+::
 
     BOTL has all the python3 code to program a unix cli program, such as
     disk perisistence for configuration files, event handler to
@@ -16,11 +19,14 @@ DESCRIPTION
     that only has dunder methods, so the namespace is not cluttered with
     method names. This makes storing and reading to/from json possible.
 
-
 AUTHOR
+
+::
 
     Bart Thate <objx@proton.me>
 
 COPYRIGHT
+
+::
 
     BOTL is Public Domain.

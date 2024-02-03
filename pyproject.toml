@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "botl"
 description = "cli library"
-version = "101"
+version = "102"
 authors = [
     {name = "Bart Thate",email = "objx@proton.me"},
 ]
