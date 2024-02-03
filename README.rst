@@ -4,6 +4,7 @@ NAME
 
     BOTL - cli library
 
+
 DESCRIPTION
 
 ::
@@ -19,11 +20,13 @@ DESCRIPTION
     that only has dunder methods, so the namespace is not cluttered with
     method names. This makes storing and reading to/from json possible.
 
+
 AUTHOR
 
 ::
 
     Bart Thate <objx@proton.me>
+
 
 COPYRIGHT
 
