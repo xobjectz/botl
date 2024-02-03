@@ -6,9 +6,11 @@
 "commands"
 
 
+from objx import Object
+
+
 from .excepts import Error
-from .objects import Object
-from .parsers import parse_command
+from .parsers import parse_cmd
 
 
 def __dir__():
@@ -30,7 +32,7 @@ class Command(Object):
 
     @staticmethod
     def handle(evt):
-        parse_command(evt)
+        parse_cmd(evt)
         func = getattr(Command.cmds, evt.cmd, None)
         if func:
             try:
