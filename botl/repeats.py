@@ -10,8 +10,10 @@ import threading
 import time
 
 
-from objx.objects import Object
-from objx.threads import launch
+from objx import Object
+
+
+from .threads import launch
 
 
 def __dir__():

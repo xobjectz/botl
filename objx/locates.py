@@ -1,12 +1,13 @@
 # This file is placed in the Public Domain
 #
-# pylint: disable=C,R
+# pylint: disable=C,R,W0105
 
 
 "find objects"
 
 
 import os
+import time
 
 
 from .default import Default

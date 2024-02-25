@@ -23,6 +23,7 @@ def __dir__():
         "load",
         "loads",
         "search",
+        'spl',
         "update",
         "values",
     )

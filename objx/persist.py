@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R
+# pylint: disable=C,R,W0105
 
 
 "eternity"
@@ -8,6 +8,7 @@
 
 import datetime
 import os
+import pathlib
 import _thread
 
 

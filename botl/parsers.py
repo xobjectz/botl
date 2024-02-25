@@ -12,7 +12,7 @@ import re
 import time as ttime
 
 
-from objx.default import Default
+from objx import Default
 
 
 def __dir__():
