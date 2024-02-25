@@ -1,47 +1,54 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0212,W0611,W0613,W0105,E0401,E0402
+# pylint: disable=C,R,W0212,E0402
 
 
-"python3 irc bot"
+"objects"
 
 
 import getpass
-import inspect
 import os
-import pwd
 import readline
 import sys
 import termios
 import time
-import _thread
 
 
 sys.path.insert(0, os.getcwd())
 
 
-from objx import Object
-from botl import Broker, Client, Command, Default, Error, Event, Handler, Storage
-from botl import cdir, cmnd, debug, forever, launch, parse_cmd, scan, spl
+from objx.default import Default
+from objx.workdir import Workdir, skel
+
+
+from botl.excepts import Error, debug, enable
+from botl.handler import Client, Command, cmnd, parse_cmd, scan
+from botl.handler import forever
 
 
 Cfg         = Default()
-Cfg.mod     = "cmd,irc,rss,mod"
-Cfg.name    = "zbot"
+Cfg.mod     = "cmd,ena,mod"
+Cfg.version = 60
 Cfg.wd      = os.path.expanduser(f"~/.{Cfg.name}")
 Cfg.pidfile = os.path.join(Cfg.wd, f"{Cfg.name}.pid")
-Cfg.user    = getpass.getuser()
-Storage.wd  = Cfg.wd
+Workdir.wd = Cfg.wd
 
 
-import zbot
+names    = __file__.split(os.sep)
 
 
-if os.path.exists("mods"):
-    import mods
+if names[-2] == "bin":
+    Cfg.name = names[-1]
 else:
-    mods = None
+    Cfg.name = names[-2]
+
+
+if os.path.exists("zbot"):
+    import zbot as mods
+else:
+    print("zbot not found")
+    os._exit(0)
 
 
 class Console(Client):
@@ -54,7 +61,7 @@ class Console(Client):
         evt.wait()
 
     def poll(self):
-        evt = Event()
+        evt = Message()
         evt.orig = object.__repr__(self)
         evt.txt = input("> ")
         evt.type = "command"
@@ -89,19 +96,6 @@ def daemon(pidfile, verbose=False):
         fds.write(str(os.getpid()))
 
 
-def daemoned():
-    daemon(Cfg.pidfile)
-    privileges(Cfg.user)
-    scan(zbot, Cfg.mod, True)
-    forever()
-
-
-def privileges(username):
-    pwnam = pwd.getpwnam(username)
-    os.setgid(pwnam.pw_gid)
-    os.setuid(pwnam.pw_uid)
-
-
 def wrap(func):
     old2 = None
     try:
@@ -117,34 +111,51 @@ def wrap(func):
             termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old2)
 
 
+"runtime"
+
+
+def cmd(event):
+    event.reply(",".join(sorted(list(Command.cmds))))
+
+
+def ver(event):
+    event.reply(f"OBJX {Cfg.version}")
+    
+
 def main():
-    readline.redisplay()
-    Storage.skel()
+    Command.add(cmd)
+    Command.add(ver)
+    enable(print)
+    skel()
     parse_cmd(Cfg, " ".join(sys.argv[1:]))
-    hasmod = Cfg.hasmods or "a" in Cfg.opts or False
-    if "a" in Cfg.opts:
-        Cfg.mod = ",".join(zbot.__dir__())
-    if mods:
-        Cfg.mod += "," + ",".join(mods.__dir__())
-    print(Cfg.mod)
+    readline.redisplay()
+    if 'a' in Cfg.opts:
+        Cfg.mod = ",".join(mods.__dir__())
     if "v" in Cfg.opts:
-        Error.output = print
         dte = time.ctime(time.time()).replace("  ", " ")
         debug(f"{Cfg.name.upper()} {Cfg.opts.upper()} started {dte}")
-    if "d" in Cfg.opts:
-        daemoned()
     if "h" in Cfg.opts:
-        return print(__doc__)
+        from . import __doc__ as txt
+        print(txt)
+        return
     if "c" in Cfg.opts:
-        scan(zbot, Cfg.mod, hasmod, Cfg.sets.dis, hasmod)
-        scan(mods, Cfg.mod, hasmod, Cfg.sets.dis, hasmod)
+        scan(mods, Cfg.mod, True, Cfg.sets.dis, True)
         csl = Console()
+        if 'z' in Cfg.opts:
+            csl.threaded = False
         csl.start()
         forever()
+        return
     if Cfg.otxt:
-        scan(zbot, Cfg.mod)
-        scan(mods, Cfg.mod)
+        Cfg.mod = ",".join(mods.__dir__())
+        scan(mods, Cfg.mod, False, Cfg.sets.dis, False)
         return cmnd(Cfg.otxt, print)
+    Cfg.mod = ",".join(mods.__dir__())
+    Cfg.user = getpass.getuser()
+    daemon(Cfg.pidfile, "v" in Cfg.opts)
+    privileges(Cfg.user)
+    scan(mods, Cfg.mod, True, Cfg.dis, True)
+    forever()
 
 
 def wrapped():
