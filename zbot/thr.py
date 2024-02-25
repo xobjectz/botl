@@ -11,7 +11,9 @@ import time
 
 
 from objx.objects import Object, update
-from botl.parsers import laps
+
+
+from botl.handler import laps
 
 
 STARTTIME = time.time()

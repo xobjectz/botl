@@ -9,14 +9,9 @@
 import time
 
 
-from objx.brokers import Broker
-from objx.locates import find
-from botl.message import Message
-from objx.objects import update
-from botl.parsers import NoDate, get_day, get_hour, laps, today, to_day
-from botl.repeats import Timer
-from objx.persist import sync
-from botl.threads import launch
+from objx import find, sync, update
+from botl import Broker, Message, Timer, launch
+from botl import NoDate, get_day, get_hour, laps, today, to_day
 
 
 def init():

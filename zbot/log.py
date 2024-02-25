@@ -11,8 +11,10 @@ import time
 
 from objx.locates import find, fntime
 from objx.objects import Object
-from botl.parsers import laps
 from objx.persist import sync
+
+
+from botl.handler import laps
 
 
 class Log(Object):

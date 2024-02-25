@@ -10,14 +10,13 @@ import datetime
 import time
 
 
-from objx.brokers import Broker
-from botl.message import Message
 from objx.objects import Object, construct, keys
-from objx.threads import launch
 
 
-from botl.parsers import laps
+from botl.brokers import Broker
+from botl.handler import Message, laps
 from botl.repeats import Repeater
+from botl.threads import launch
 
 
 def __dir__():

@@ -6,8 +6,7 @@
 "status of bots"
 
 
-from objx.brokers import Broker
-from botl.excepts import Error
+from botl import Broker, Error
 
 
 def err(event):

@@ -14,7 +14,7 @@ from objx.objects import Object
 from objx.persist import sync
 
 
-from botl.parsers import laps 
+from botl.handler import laps 
 
 
 class NoDate(Exception):

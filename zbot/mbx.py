@@ -11,11 +11,8 @@ import os
 import time
 
 
-from objx.locates import find
-from objx.objects import Object, fmt, update
-from botl.parsers import laps
-from objx.persist import sync
-from botl.utility import fntime
+from objx import Object, find, fmt, sync, update
+from botl import fntime, laps
 
 
 MONTH = {

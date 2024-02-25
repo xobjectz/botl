@@ -6,8 +6,8 @@
 "modules"
 
 
-from . import cmd, ena, irc, log, mod, mre, pwd, rss, tdo, flt, thr
-from . import mdl, req, shl, slg
+from . import irc, log, mod, mre, pwd, rss, tdo, flt, thr
+from . import mdl, req, slg
 
 
 def __geno__():
@@ -20,8 +20,6 @@ def __geno__():
 
 def __dir__():
     return (
-        'cmd',
-        'ena',
         'flt',
         'irc',
         'log',
@@ -29,7 +27,6 @@ def __dir__():
         'mre',
         'pwd',
         'rss',
-        'shl',
         'tdo',
         'thr'
     ) + __geno__()
