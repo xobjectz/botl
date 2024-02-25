@@ -3,7 +3,7 @@
 # pylint: disable=C,R,W0718,W0702,E0402
 
 
-"parsers"
+"parsing text"
 
 
 import datetime
@@ -12,29 +12,24 @@ import re
 import time as ttime
 
 
-from .default import Default
+from objx.default import Default
 
 
 def __dir__():
     return (
         'NoDate',
         'fntime',
-        'get_day',
-        'get_hour',
-        'get_time',
         'laps',
         'parse_cmd',
         'parse_time',
-        'spl',
-        'today',
-        'to_day'
+        'spl'
     )
 
 
 __all__ = __dir__()
 
 
-bdmonths = [
+MONTHS = [
     'Bo',
     'Jan',
     'Feb',
@@ -51,7 +46,7 @@ bdmonths = [
 ]
 
 
-year_formats = [
+FORMATS = [
     "%Y-%m-%d",
     "%d-%m-%Y",
     "%d-%m",
@@ -65,7 +60,7 @@ class NoDate(Exception):
 
 
 def extract_date(daystr):
-    for fmt in year_formats:
+    for fmt in FORMATS:
         try:
             res = ttime.mktime(ttime.strptime(daystr, fmt))
         except ValueError:
@@ -101,7 +96,7 @@ def get_day(daystr):
     day = int(day)
     month = int(month)
     yea = int(yea)
-    date = "%s %s %s" % (day, bdmonths[month], yea)
+    date = "%s %s %s" % (day, MONTHS[month], yea)
     return ttime.mktime(ttime.strptime(date, r"%d %b %Y"))
 
 

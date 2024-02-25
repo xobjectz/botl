@@ -13,8 +13,9 @@ import threading
 import time
 
 
-from objx import Object
-from botl import Broker, launch
+from objx.objects import Object
+from objx.brokers import Broker
+from botl.threads import launch
 
 
 def init():

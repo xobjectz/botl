@@ -1,9 +1,9 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0212,W0719,E0402
+# pylint: disable=C,R,W0212,E0402
 
 
-"events"
+"handler"
 
 
 import queue
@@ -11,53 +11,18 @@ import threading
 import _thread
 
 
-from objx import Object
-
-from .brokers import Broker
-from .default import Default
-from .threads import launch
+from objx.brokers import Broker
+from objx.objects import Object
+from objx.threads import launch
 
 
 def __dir__():
     return (
-        'Event',
-        'Handler'
+        'Handler',
    ) 
 
 
 __all__ = __dir__()
-
-
-class Event(Default):
-
-    def __init__(self):
-        Default.__init__(self)
-        self._ready  = threading.Event()
-        self._thr    = None
-        self.done    = False
-        self.orig    = None
-        self.result  = []
-        self.txt     = ""
-
-    def ready(self):
-        self._ready.set()
-
-    def reply(self, txt):
-        self.result.append(txt)
-
-    def show(self):
-        if not self.orig:
-            raise Exception("no orig")
-        for txt in self.result:
-            bot = Broker.byorig(self.orig) or Broker.first()
-            if bot:
-                bot.say(self.channel, txt)
-
-    def wait(self):
-        if self._thr:
-            self._thr.join()
-        self._ready.wait()
-        return self.result
 
 
 class Handler(Object):
@@ -67,18 +32,25 @@ class Handler(Object):
         self.cbs      = Object()
         self.queue    = queue.Queue()
         self.stopped  = threading.Event()
+        self.threaded = True
+        Broker.add(self)
 
     def callback(self, evt):
         func = getattr(self.cbs, evt.type, None)
         if not func:
             evt.ready()
             return
-        evt._thr = launch(func, evt)
- 
+        if self.threaded:
+            evt._thr = launch(func, evt)
+        else:
+            func(evt)
+            evt.ready()
+
     def loop(self):
         while not self.stopped.is_set():
             try:
-                self.callback(self.poll())
+                evt = self.poll()
+                self.callback(evt)
             except (KeyboardInterrupt, EOFError):
                 _thread.interrupt_main()
 

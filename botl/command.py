@@ -6,7 +6,7 @@
 "commands"
 
 
-from objx import Object
+from objx.objects import Object
 
 
 from .excepts import Error
@@ -15,7 +15,8 @@ from .parsers import parse_cmd
 
 def __dir__():
     return (
-        "Command",
+        'Command',
+        'command'
     )
 
 
@@ -30,14 +31,14 @@ class Command(Object):
     def add(func):
         setattr(Command.cmds, func.__name__, func)
 
-    @staticmethod
-    def handle(evt):
-        parse_cmd(evt)
-        func = getattr(Command.cmds, evt.cmd, None)
-        if func:
-            try:
-                func(evt)
-                evt.show()
-            except Exception as exc:
-                Error.add(exc)
-        evt.ready()
+
+def command(evt):
+    parse_cmd(evt)
+    func = getattr(Command.cmds, evt.cmd, None)
+    if func:
+        try:
+            func(evt)
+            evt.show()
+        except Exception as exc:
+            Error.add(exc)
+    evt.ready()

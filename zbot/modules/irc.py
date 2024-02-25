@@ -1,12 +1,11 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,E1101,W0105,W0718,W0612,E0611
+# pylint: disable=C,R,W0105,W0612,W0718,E0402,W0201,W0603
+# ruff: noqa: F841
+
+"internet relay chat"
 
 
-"chat"
-
-
-import base64
 import os
 import queue
 import socket
@@ -17,24 +16,46 @@ import time
 import _thread
 
 
-from objx import Object, edit, fmt, keys
-from botl import Broker, Client, Command, Default, Error, Event
-from botl import debug, last, launch, write
+from objx.brokers import Broker
+from botl.clients import Client
+from botl.command import command
+from objx.default import Default
+from objx.excepts import Error, debug
+from objx.locates import last
+from botl.message import Message
+from objx.objects import Object, edit, fmt, keys
+from objx.persist import sync
+from objx.threads import launch
 
 
-NAME = "zbot"
+NAME    = __file__.split(os.sep)[-3]
+get     = Broker.get
+saylock = _thread.allocate_lock()
 
 
 Error.filter = ["PING", "PONG", "PRIVMSG"]
-byorig       = Broker.byorig
-saylock      = _thread.allocate_lock()
+
+
+myirc = None
 
 
 def init():
+    global myirc
     irc = IRC()
+    myirc = object.__repr__(irc)
     irc.start()
     irc.events.joined.wait()
     return irc
+
+
+def shutdown():
+    debug(f"IRC stopping {myirc}")
+    irc = Broker.get(myirc)
+    if irc:
+        irc.state.pongcheck = True
+        irc.state.keeprunning = False
+        irc.events.connected.clear()
+        irc.stop()
 
 
 class Config(Default):
@@ -95,7 +116,8 @@ class Output():
     def extend(channel, txtlist):
         if channel not in Output.cache:
             Output.cache[channel] = []
-        Output.cache[channel].extend(txtlist)
+        chanlist = getattr(Output.cache, channel)
+        chanlist.extend(txtlist)
 
     @staticmethod
     def gettxt(channel):
@@ -137,7 +159,7 @@ class Output():
     @staticmethod
     def size(chan):
         if chan in Output.cache:
-            return len(Output.cache.get(chan, []))
+            return len(getattr(Output.cache, chan, []))
         return 0
 
 
@@ -148,14 +170,15 @@ class IRC(Client, Output):
         Output.__init__(self)
         self.buffer = []
         self.cfg = Config()
+        self.channels = []
         self.events = Default()
         self.events.authed = threading.Event()
         self.events.connected = threading.Event()
         self.events.joined = threading.Event()
         self.events.ready = threading.Event()
-        self.channels = []
         self.sock = None
         self.state = Default()
+        self.state.dostop = False
         self.state.keeprunning = False
         self.state.lastline = ""
         self.state.nrconnect = 0
@@ -171,6 +194,7 @@ class IRC(Client, Output):
         self.register('PRIVMSG', cb_privmsg)
         self.register('QUIT', cb_quit)
         self.register("366", cb_ready)
+        Broker.add(self)
 
     def announce(self, txt):
         for channel in self.channels:
@@ -224,17 +248,16 @@ class IRC(Client, Output):
             time.sleep(2.0)
 
     def disconnect(self):
-        # flake8: noqa
         try:
             self.sock.shutdown(2)
         except (
                 ssl.SSLError,
                 OSError,
                 BrokenPipeError
-               ) as ex:  
-               s
+               ) as ex:
+            pass
         except Exception as ex:
-            Error.errors.append(ex)
+            Error.add(ex)
 
     def doconnect(self, server, nck, port=6667):
         while 1:
@@ -284,6 +307,9 @@ class IRC(Client, Output):
 
     def keep(self):
         while not self.stopped.is_set():
+            if self.state.stopkeep:
+                self.state.stopkeep = False
+                break
             self.events.connected.wait()
             self.events.authed.wait()
             self.state.keeprunning = True
@@ -311,7 +337,7 @@ class IRC(Client, Output):
         rawstr = rawstr.replace('\u0001', '')
         rawstr = rawstr.replace('\001', '')
         debug(txt)
-        obj = Event()
+        obj = Message()
         obj.args = []
         obj.rawstr = rawstr
         obj.command = ''
@@ -410,7 +436,7 @@ class IRC(Client, Output):
                     ConnectionResetError,
                     BrokenPipeError
                    ) as ex:
-                Error.errors.append(ex)
+                Error.add(ex)
                 self.stop()
                 return
         self.state.last = time.time()
@@ -467,6 +493,8 @@ class IRC(Client, Output):
             launch(self.keep)
 
     def stop(self):
+        #self.command("QUIT", "byebye")
+        self.state.stopkeep = True
         self.disconnect()
         self.dostop.set()
         self.oput(None, None)
@@ -477,12 +505,12 @@ class IRC(Client, Output):
 
 
 def cb_auth(evt):
-    bot = byorig(evt.orig)
+    bot = get(evt.orig)
     bot.command(f'AUTHENTICATE {bot.cfg.password}')
 
 
 def cb_cap(evt):
-    bot = byorig(evt.orig)
+    bot = get(evt.orig)
     if bot.cfg.password and 'ACK' in evt.arguments:
         bot.direct('AUTHENTICATE PLAIN')
     else:
@@ -490,20 +518,22 @@ def cb_cap(evt):
 
 
 def cb_error(evt):
-    bot = byorig(evt.orig)
+    bot = get(evt.orig)
+    if not bot.state.nrerror:
+        bot.state.nrerror = 0
     bot.state.nrerror += 1
     bot.state.errors.append(evt.txt)
     debug(evt.txt)
 
 
 def cb_h903(evt):
-    bot = byorig(evt.orig)
+    bot = get(evt.orig)
     bot.direct('CAP END')
     bot.events.authed.set()
 
 
 def cb_h904(evt):
-    bot = byorig(evt.orig)
+    bot = get(evt.orig)
     bot.direct('CAP END')
     bot.events.authed.set()
 
@@ -517,25 +547,25 @@ def cb_log(evt):
 
 
 def cb_ready(evt):
-    bot = byorig(evt.orig)
+    bot = get(evt.orig)
     if bot:
         bot.events.ready.set()
 
 
 def cb_001(evt):
-    bot = byorig(evt.orig)
+    bot = get(evt.orig)
     bot.logon()
 
 
 def cb_notice(evt):
-    bot = byorig(evt.orig)
+    bot = get(evt.orig)
     if evt.txt.startswith('VERSION'):
         txt = f'\001VERSION {NAME.upper()} 140 - {bot.cfg.username}\001'
         bot.command('NOTICE', evt.channel, txt)
 
 
 def cb_privmsg(evt):
-    bot = byorig(evt.orig)
+    bot = get(evt.orig)
     if not bot.cfg.commands:
         return
     if evt.txt:
@@ -548,11 +578,11 @@ def cb_privmsg(evt):
         if evt.txt:
             evt.txt = evt.txt[0].lower() + evt.txt[1:]
         debug(f"command from {evt.origin}: {evt.txt}")
-        Command.handle(evt)
+        command(evt)
 
 
 def cb_quit(evt):
-    bot = byorig(evt.orig)
+    bot = get(evt.orig)
     debug(f"quit from {bot.cfg.server}")
     if evt.orig and evt.orig in bot.zelf:
         bot.stop()
@@ -561,7 +591,7 @@ def cb_quit(evt):
 def cfg(event):
     config = Config()
     path = last(config)
-    if not path or not event.sets:
+    if not event.sets:
         event.reply(
                     fmt(
                         config,
@@ -571,37 +601,6 @@ def cfg(event):
                    )
     else:
         edit(config, event.sets)
-        write(config, path)
+        sync(config, path)
         event.reply('ok')
 
-
-def mre(event):
-    if not event.channel:
-        event.reply('channel is not set.')
-        return
-    bot = Broker.byorig(event.orig)
-    if 'cache' not in dir(bot):
-        event.reply('bot is missing cache')
-        return
-    if event.channel not in bot.cache:
-        event.reply(f'no output in {event.channel} cache.')
-        return
-    for _x in range(3):
-        txt = bot.gettxt(event.channel)
-        if txt:
-            bot.say(event.channel, txt)
-    size = bot.size(event.channel)
-    event.reply(f'{size} more in cache')
-
-
-def pwd(event):
-    if len(event.args) != 2:
-        event.reply('pwd <nick> <password>')
-        return
-    arg1 = event.args[0]
-    arg2 = event.args[1]
-    txt = f'\x00{arg1}\x00{arg2}'
-    enc = txt.encode('ascii')
-    base = base64.b64encode(enc)
-    dcd = base.decode('ascii')
-    event.reply(dcd)

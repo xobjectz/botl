@@ -3,15 +3,15 @@
 # pylint: disable=C0116,W0105,E0402,E0401,E0611
 
 
-"threads"
+"show running threads"
 
 
 import threading
 import time
 
 
-from objx import Object, update
-from botl import laps
+from objx.objects import Object, update
+from botl.parsers import laps
 
 
 STARTTIME = time.time()

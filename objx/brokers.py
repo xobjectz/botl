@@ -3,15 +3,15 @@
 # pylint: disable=C,R,E0402
 
 
-"broker"
+"object cache"
 
 
-from objx import Object, keys, values
+from .objects import Object, keys, values
 
 
 def __dir__():
     return (
-        "Broker",
+        'Broker',
     )
 
 
@@ -39,9 +39,9 @@ class Broker(Object):
             return getattr(Broker.objs, key)
 
     @staticmethod
-    def remove(obj):
-        delattr(Broker.objs, rpr(obj))
+    def get(orig):
+        return getattr(Broker.objs, orig, None)
 
     @staticmethod
-    def byorig(orig):
-        return getattr(Broker.objs, orig, None)
+    def remove(obj):
+        delattr(Broker.objs, rpr(obj))

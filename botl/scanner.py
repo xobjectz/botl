@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0212
+# pylint: disable=C,R,W0201,W0613,W0212
 
 
 "scanner"
@@ -9,12 +9,13 @@
 import inspect
 
 
-from objx import Object
+from objx.objects import Object
+from objx.persist import Persist
+from objx.threads import launch
+
 
 from .command import Command
 from .parsers import spl
-from .storage import Storage
-from .threads import launch
 
 
 def __dir__():
@@ -26,7 +27,7 @@ def __dir__():
 __all__ = __dir__()
 
 
-def scan(pkg, modstr, initer=False, disable="", wait=True) -> []:
+def scan(pkg, modstr, initer=False, disable="", wait=True):
     mds = []
     for modname in spl(modstr):
         if modname in spl(disable):
@@ -40,7 +41,7 @@ def scan(pkg, modstr, initer=False, disable="", wait=True) -> []:
         for _key, clz in inspect.getmembers(module, inspect.isclass):
             if not issubclass(clz, Object):
                 continue
-            Storage.add(clz)
+            Persist.add(clz)
         if initer and "init" in dir(module):
             module._thr = launch(module.init, name=f"init {modname}")
             mds.append(module)

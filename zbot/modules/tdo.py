@@ -1,16 +1,20 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C0115,C0116,R0903,W0105,E0402,E0611
+# pylint: disable=C,R,E0402
 
 
-"todo"
+"todo list"
 
 
 import time
 
 
-from objx import Object
-from botl import find, fntime, laps, sync
+from objx.locates import find, fntime
+from objx.objects import Object
+from objx.persist import sync
+
+
+from botl.parsers import laps 
 
 
 class NoDate(Exception):

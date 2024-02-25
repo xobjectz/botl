@@ -14,8 +14,12 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from objx import Object
-from botl import Default, Error, Storage, debug, launch
+from objx.default import Default
+from botl.excepts import Error, debug
+from objx.locates import fns
+from objx.objects import Object
+from botl.threads import launch
+from objx.workdir import Workdir
 
 
 def init():
@@ -91,11 +95,11 @@ class RESTHandler(BaseHTTPRequestHandler):
         if self.path == "/":
             self.write_header("text/html")
             txt = ""
-            for fnm in Storage.fns():
+            for fnm in fns():
                 txt += f'<a href="http://{Config.hostname}:{Config.port}/{fnm}">{fnm}</a>\n'
             self.send(html(txt.strip()))
             return
-        fnm = Storage.wd + os.sep + "store" + os.sep + self.path
+        fnm = Workdir.wd + os.sep + "store" + os.sep + self.path
         try:
             f = open(fnm, "r", encoding="utf-8")
             txt = f.read()
