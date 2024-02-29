@@ -16,14 +16,14 @@ import time
 import _thread
 
 
-from objx.objects import Default
-from objx.persist import Workdir
-from objx.runtime import init, scan
+from botl.objects import Default
+from botl.persist import Workdir
+from botl.runtime import init, scan
 
 
 Cfg         = Default()
 Cfg.mod     = "cmd,err,fnd,mod,thr"
-Cfg.name    = "objx"
+Cfg.name    = "botl"
 Cfg.version = "60"
 Cfg.wd      = os.path.expanduser(f"~/.{Cfg.name}")
 Cfg.pidfile = os.path.join(Cfg.wd, f"{Cfg.name}.pid")
@@ -71,17 +71,20 @@ def writepid(pidfile):
         fds.write(str(os.getpid()))
 
 
-from objx import modules
+if os.path.exists("mods"):
+    import mods
+else:
+    mods = None
 
 
 def main():
     Cfg.user = getpass.getuser()
-    Cfg.mod  = ",".join(modules.__dir__())
+    Cfg.mod  = ",".join(mods.__dir__())
     daemon()
     writepid(Cfg.pidfile)
     privileges(Cfg.user)
-    scan(modules, Cfg.mod)
-    init(modules, Cfg.mod)
+    scan(mods, Cfg.mod)
+    init(mods, Cfg.mod)
     forever()
 
 
