@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+#
+# pylint: disable=C,R
+
+
+"sed line for line"
+
+
+import os
+import sys
+import subprocess
+
+
+def popen(txt):
+    with subprocess.Popen(
+                          txt.split(),
+                          stdin=sys.stdin,
+                          stdout=sys.stdout,
+                          stderr=sys.stderr,
+                          close_fds=False,
+                          text=True
+                         ) as proc:
+        proc.communicate()
+        proc.wait()
+
+
+def main():
+    try:
+        path  = sys.argv[1]
+        fromm = sys.argv[2]
+        to    = sys.argv[2]
+    except IndexError:
+        print("sed <path> <from> <to>")
+        return
+    for file in os.listdir(path):
+        pth = os.path.join(path, file)
+        dest = os.path.join(path, file + ".sed")
+        print(pth)
+        popen(f"sed -r s/{fromm}/{to}/ {pth} > {dest}")
+        popen("cp {pth} {dest}")
+
+
+if __name__ == "__main__":
+    main()
