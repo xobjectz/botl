@@ -9,8 +9,8 @@
 import time
 
 
-from objx.objects  import Object
-from objx.persist import find, fntime, laps, sync
+from botl.objects  import Object
+from botl.persist import find, fntime, laps, sync
 
 
 class Log(Object):
