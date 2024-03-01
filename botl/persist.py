@@ -17,22 +17,7 @@ import _thread
 from .objects import Default, Object, dump, fqn, load, search, update
 
 
-def __dir__():
-    return (
-        'Persist',
-        'Workdir',
-        'fetch',
-        'fntime',
-        'find',
-        'last',
-        'ident',
-        'read',
-        'sync',
-        'write'
-    )
-
-
-__all__ = __dir__()
+lock = _thread.allocate_lock()
 
 
 class Workdir(Object):
@@ -61,10 +46,6 @@ class Workdir(Object):
     @staticmethod
     def types():
         return os.listdir(Workdir.store())
-
-
-
-lock = _thread.allocate_lock()
 
 
 class Persist(Object):
@@ -227,3 +208,24 @@ def find(mtc, selector=None, index=None, deleted=False):
         if index is not None and nr != int(index):
             continue
         yield (fnm, obj)
+
+
+"interface"
+
+
+def __dir__():
+    return (
+        'Persist',
+        'Workdir',
+        'fetch',
+        'fntime',
+        'find',
+        'last',
+        'ident',
+        'read',
+        'sync',
+        'write'
+    )
+
+
+__all__ = __dir__()

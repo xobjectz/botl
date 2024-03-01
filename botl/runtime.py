@@ -402,3 +402,33 @@ def scan(pkg, modstr, disable=""):
         mds.append(module)
     return mds
 
+
+"interface"
+
+
+def __dir__():
+    return (
+        'Broker',
+        'Client',
+        'Errors',
+        'Event',
+        'Handler',
+        'Repeater',
+        'Thread',
+        'Timer',
+        'cmnd',
+        'debug',
+        'forever',
+        'init',
+        'launch',
+        'name',
+        'parse_cmd',
+        'scan'
+    )
+
+
+__all__ = __dir__()
+
+
+
+
