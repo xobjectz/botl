@@ -75,10 +75,9 @@ def writepid(pidfile):
 
 
 def main():
-    Errors.enable(print)
     Cfg.user = getpass.getuser()
     Cfg.mod  = ",".join(listmods(Cfg.modpath))
-    daemon(True)
+    daemon()
     writepid(Cfg.pidfile)
     privileges(Cfg.user)
     sys.path.insert(0, Cfg.wd)
