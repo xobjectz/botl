@@ -6,23 +6,23 @@
 "modules"
 
 
-from . import log, tdo, flt, mdl, req, slg
+import importlib
+import os
 
 
-def __geno__():
-    return (
-        'mdl',
-        'req',
-        'slg'
-    )
+dirname = os.path.dirname(__file__)
+pkgname = dirname.split(os.sep)[-1]
+modules =  []
 
 
 def __dir__():
-    return (
-        'flt',
-        'log',
-        'tdo',
-    ) + __geno__()
+    return modules
 
-
-__all__ = __dir__()
+for path in os.listdir(dirname):
+    if path.startswith("__"):
+        continue
+    if not path.endswith(".py"):
+        continue
+    name = path[:-3]
+    mod = importlib.import_module(f"{pkgname}.{name}", pkgname)
+    modules.append(name)
