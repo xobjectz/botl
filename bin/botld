@@ -18,13 +18,14 @@ import _thread
 
 from botl.objects import Default
 from botl.persist import Workdir
-from botl.runtime import init, scan
+from botl.runtime import init, listmods, scan
 
 
 Cfg         = Default()
 Cfg.mod     = "cmd,err,fnd,mod,thr"
+Cfg.modpath = os.path.join(os.getcwd(), "mods")
 Cfg.name    = "botl"
-Cfg.version = "60"
+Cfg.version = "110"
 Cfg.wd      = os.path.expanduser(f"~/.{Cfg.name}")
 Cfg.pidfile = os.path.join(Cfg.wd, f"{Cfg.name}.pid")
 Workdir.wd  = Cfg.wd
@@ -79,7 +80,7 @@ else:
 
 def main():
     Cfg.user = getpass.getuser()
-    Cfg.mod  = ",".join(mods.__dir__())
+    Cfg.mod  = ",".join(listmods(Cfg.modpath))
     daemon()
     writepid(Cfg.pidfile)
     privileges(Cfg.user)
