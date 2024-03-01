@@ -10,8 +10,8 @@ import threading
 import time
 
 
-from objx.objects import Object, update
-from objx.persist import laps
+from botl.objects import Object, update
+from botl.persist import laps
 
 
 STARTTIME = time.time()

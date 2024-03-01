@@ -28,16 +28,16 @@ def main():
     try:
         path  = sys.argv[1]
         fromm = sys.argv[2]
-        to    = sys.argv[2]
+        to    = sys.argv[3]
     except IndexError:
         print("sed <path> <from> <to>")
         return
     for file in os.listdir(path):
+        if not file.endswith(".py"):
+             continue
         pth = os.path.join(path, file)
-        dest = os.path.join(path, file + ".sed")
         print(pth)
-        popen(f"sed -r s/{fromm}/{to}/ {pth} > {dest}")
-        popen("cp {pth} {dest}")
+        popen(f"sed -E -i s/{fromm}/{to}/ {pth}")
 
 
 if __name__ == "__main__":

@@ -17,9 +17,9 @@ import time
 import _thread
 
 
-from objx.objects import Default, Object, edit, fmt, keys
-from objx.runtime import Broker, Client, Errors, Event, debug, launch
-from objx.persist import last, sync
+from botl.objects import Default, Object, edit, fmt, keys
+from botl.runtime import Broker, Client, Errors, Event, debug, launch
+from botl.persist import last, sync
 
 
 NAME    = __file__.split(os.sep)[-3]

@@ -14,9 +14,9 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from objx.objects import Default, Object
-from objx.persist import Persist, Workdir
-from objx.runtime import Errors, debug, launch
+from botl.objects import Default, Object
+from botl.persist import Persist, Workdir
+from botl.runtime import Errors, debug, launch
 
 
 def init():

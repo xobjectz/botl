@@ -18,9 +18,9 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from objx.objects import Default, Object, fmt, update
-from objx.persist import find, fntime, laps, last, sync
-from objx.runtime import Broker, Repeater, launch
+from botl.objects import Default, Object, fmt, update
+from botl.persist import find, fntime, laps, last, sync
+from botl.runtime import Broker, Repeater, launch
 
 
 def init():

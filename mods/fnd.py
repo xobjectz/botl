@@ -6,8 +6,8 @@
 "locate"
 
 
-from objx.objects import fmt
-from objx.persist import Persist, Workdir, find
+from botl.objects import fmt
+from botl.persist import Persist, Workdir, find
 
 
 def fnd(event):

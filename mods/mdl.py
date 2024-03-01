@@ -10,9 +10,9 @@ import datetime
 import time
 
 
-from objx.runtime import Broker, Event, Repeater, launch
-from objx.objects import Object, construct, keys
-from objx.persist import laps
+from botl.runtime import Broker, Event, Repeater, launch
+from botl.objects import Object, construct, keys
+from botl.persist import laps
 
 
 def __dir__():

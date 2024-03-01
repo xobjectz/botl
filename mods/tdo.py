@@ -9,8 +9,8 @@
 import time
 
 
-from objx.objects import Object
-from objx.persist import fntime, find, laps, sync
+from botl.objects import Object
+from botl.persist import fntime, find, laps, sync
 
 
 class NoDate(Exception):

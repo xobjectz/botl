@@ -6,7 +6,7 @@
 "list of commands"
 
 
-from objx.runtime import Client
+from botl.runtime import Client
 
 
 def cmd(event):
