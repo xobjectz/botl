@@ -302,7 +302,7 @@ def forever():
             _thread.interrupt_main()
 
 
-def init(pkg, modstr, disable="", wait=False):
+def init(pkg, modstr, disable=""):
     mds = []
     for modname in spl(modstr):
         if modname in spl(disable):
@@ -311,7 +311,7 @@ def init(pkg, modstr, disable="", wait=False):
         if not module:
             continue
         if "init" in dir(module):
-            module.init()
+            launch(module.init)
     return mds
 
 
@@ -324,6 +324,8 @@ def launch(func, *args, **kwargs):
 
 def listmods(path):
     res = []
+    if not os.path.exists(path):
+        return res
     for fnm in os.listdir(path):
         if not fnm.endswith(".py"):
             continue

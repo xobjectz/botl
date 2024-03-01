@@ -22,7 +22,7 @@ from botl.runtime import Broker, Client, Errors, Event, debug, launch
 from botl.persist import last, sync
 
 
-NAME    = __file__.split(os.sep)[-3]
+NAME    = "botl"
 get     = Broker.get
 saylock = _thread.allocate_lock()
 

@@ -16,18 +16,20 @@ import time
 import _thread
 
 
-from botl.objects import Default
+from botl.objects import Default, fmt
 from botl.persist import Workdir
-from botl.runtime import init, listmods, scan
+from botl.runtime import Errors, init, listmods, scan
 
 
 Cfg         = Default()
-Cfg.mod     = "cmd,err,fnd,mod,thr"
-Cfg.modpath = os.path.join(os.getcwd(), "mods")
+Cfg.disable = "rst,udp"
 Cfg.name    = "botl"
-Cfg.version = "110"
 Cfg.wd      = os.path.expanduser(f"~/.{Cfg.name}")
+Cfg.modpath = os.path.join(Cfg.wd, "mods")
 Cfg.pidfile = os.path.join(Cfg.wd, f"{Cfg.name}.pid")
+Cfg.version = "110"
+
+
 Workdir.wd  = Cfg.wd
 
 
@@ -72,22 +74,23 @@ def writepid(pidfile):
         fds.write(str(os.getpid()))
 
 
-if os.path.exists("mods"):
-    import mods
-else:
-    mods = None
-
-
 def main():
+    Errors.enable(print)
     Cfg.user = getpass.getuser()
     Cfg.mod  = ",".join(listmods(Cfg.modpath))
-    daemon()
+    daemon(True)
     writepid(Cfg.pidfile)
     privileges(Cfg.user)
-    scan(mods, Cfg.mod)
-    init(mods, Cfg.mod)
+    sys.path.insert(0, Cfg.wd)
+    try:
+        import mods
+    except ModuleNotFoundError:
+        mods = None
+    scan(mods, Cfg.mod, Cfg.disable)
+    init(mods, Cfg.mod, Cfg.disable)
     forever()
 
 
 if __name__ == "__main__":
     main()
+    Errors.show()

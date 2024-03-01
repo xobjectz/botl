@@ -47,8 +47,8 @@ from botl.runtime import cmnd, debug, forever, init, parse_cmd, scan
 Cfg         = Default()
 Cfg.mod     = "cmd,mod"
 Cfg.name    = "botl"
-Cfg.modpath = os.path.join(os.getcwd(), "mods")
-Cfg.version = "60"
+Cfg.modpath = os.path.expanduser("~/mods")
+Cfg.version = "110"
 Cfg.wd      = os.path.expanduser(f"~/.{Cfg.name}")
 Cfg.pidfile = os.path.join(Cfg.wd, f"{Cfg.name}.pid")
 
@@ -149,12 +149,12 @@ def main():
         daemon(Cfg.pidfile, "v" in Cfg.opts)
         privileges(Cfg.user)
         scan(mods, Cfg.mod, Cfg.sets.dis)
-        init(mods, Cfg.mod, Cfg.sets.dis, True)
+        init(mods, Cfg.mod, Cfg.sets.dis)
         forever()
         return
     if "c" in Cfg.opts:
         scan(mods, Cfg.mod, Cfg.sets.dis)
-        init(mods, Cfg.mod, Cfg.sets.dis, True)
+        init(mods, Cfg.mod, Cfg.sets.dis)
         csl = Console()
         csl.start()
         forever()
