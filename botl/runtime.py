@@ -8,6 +8,7 @@
 
 import inspect
 import io
+import os
 import queue
 import threading
 import time
@@ -321,6 +322,17 @@ def launch(func, *args, **kwargs):
     return thread
 
 
+def listmods(path):
+    res = []
+    for fnm in os.listdir(path):
+        if not fnm.endswith(".py"):
+            continue
+        if fnm.startswith("__"):
+            continue
+        res.append(fnm[:-3])
+    return res
+
+
 def name(obj):
     typ = type(obj)
     if isinstance(typ, types.ModuleType):
@@ -421,6 +433,7 @@ def __dir__():
         'forever',
         'init',
         'launch',
+        'listmods',
         'name',
         'parse_cmd',
         'scan'
@@ -428,7 +441,3 @@ def __dir__():
 
 
 __all__ = __dir__()
-
-
-
-

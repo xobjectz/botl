@@ -10,13 +10,10 @@ name = "botl"
 description = "cli library"
 version = "103"
 authors = [
-    {name = "Bart Thate",email = "objx@proton.me"},
+    {name = "Bart Thate",email = "bthate@dds.nl"},
 ]
 readme = "README.rst"
 license = {text="Public Domain"}
-dependencies = [
-    "objx",
-]
 classifiers = [ 
     'Development Status :: 3 - Alpha',
     'License :: Public Domain',
@@ -30,9 +27,39 @@ classifiers = [
 "bugs" = "https://github.com/xobjectz/botl/issues"
 "source" = "https://github.com/xobjectz/botl"
 
-[tool.setuptools]
 
+[tool.setuptools]
+script-files = [
+    'bin/botl',
+    'bin/botld'
+]
 packages = [
     "botl",
 ]
 zip-safe=true
+
+
+[tool.setuptools.data-files]
+"share/doc/botl" = [
+    "README.rst"
+]
+"mods" = [
+    'mods/cmd.py',
+    'mods/err.py',
+    'mods/flt.py',
+    'mods/fnd.py',
+    'mods/irc.py',
+    'mods/log.py',
+    'mods/mbx.py',
+    'mods/mdl.py',
+    'mods/mod.py',
+    'mods/req.py',
+    'mods/rss.py',
+    'mods/rst.py',
+    'mods/slg.py',
+    'mods/tdo.py',
+    'mods/thr.py',
+    'mods/tmr.py',
+    'mods/udp.py',
+    'mods/wsd.py'
+]

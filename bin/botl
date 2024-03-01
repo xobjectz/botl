@@ -40,13 +40,14 @@ sys.path.insert(0, os.getcwd())
 
 from botl.objects import Default
 from botl.persist import Workdir
-from botl.runtime import Client, Errors, Event
+from botl.runtime import Client, Errors, Event, listmods
 from botl.runtime import cmnd, debug, forever, init, parse_cmd, scan
 
 
 Cfg         = Default()
 Cfg.mod     = "cmd,mod"
 Cfg.name    = "botl"
+Cfg.modpath = os.path.join(os.getcwd(), "mods")
 Cfg.version = "60"
 Cfg.wd      = os.path.expanduser(f"~/.{Cfg.name}")
 Cfg.pidfile = os.path.join(Cfg.wd, f"{Cfg.name}.pid")
@@ -124,7 +125,7 @@ def wrap(func):
             termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old2)
 
 
-if os.path.exists("mods"):
+if os.path.exists(Cfg.modpath):
     import mods
 else:
     mods = None
@@ -136,14 +137,14 @@ def main():
     parse_cmd(Cfg, " ".join(sys.argv[1:]))
     readline.redisplay()
     if 'a' in Cfg.opts:
-        Cfg.mod = ",".join(mods.__dir__())
+        Cfg.mod = ",".join(listmods(Cfg.modpath))
     if "v" in Cfg.opts:
         debug(f"{Cfg.name.upper()} {Cfg.opts.upper()} started {dte}")
     if "h" in Cfg.opts:
         print(__doc__)
         return
     if "d" in Cfg.opts:
-        Cfg.mod = ",".join(mods.__dir__())
+        Cfg.mod = ",".join(listmods(Cfg.modpath))
         Cfg.user = getpass.getuser()
         daemon(Cfg.pidfile, "v" in Cfg.opts)
         privileges(Cfg.user)
@@ -159,7 +160,7 @@ def main():
         forever()
         return
     if Cfg.otxt:
-        Cfg.mod = ",".join(mods.__dir__())
+        Cfg.mod = ",".join(listmods(Cfg.modpath))
         scan(mods, Cfg.mod, Cfg.sets.dis)
         return cmnd(Cfg.otxt, print)
 
