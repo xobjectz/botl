@@ -7,8 +7,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "botl"
-description = "cli library"
-version = "103"
+description = "cli bot"
+version = "105"
 authors = [
     {name = "Bart Thate",email = "bthate@dds.nl"},
 ]
@@ -31,10 +31,10 @@ classifiers = [
 [tool.setuptools]
 script-files = [
     'bin/botl',
-    'bin/botld'
 ]
 packages = [
     "botl",
+    "botl.modules"
 ]
 zip-safe=true
 
@@ -42,24 +42,4 @@ zip-safe=true
 [tool.setuptools.data-files]
 "share/doc/botl" = [
     "README.rst"
-]
-"mods" = [
-    'mods/cmd.py',
-    'mods/err.py',
-    'mods/flt.py',
-    'mods/fnd.py',
-    'mods/irc.py',
-    'mods/log.py',
-    'mods/mbx.py',
-    'mods/mdl.py',
-    'mods/mod.py',
-    'mods/req.py',
-    'mods/rss.py',
-    'mods/rst.py',
-    'mods/slg.py',
-    'mods/tdo.py',
-    'mods/thr.py',
-    'mods/tmr.py',
-    'mods/udp.py',
-    'mods/wsd.py'
 ]
