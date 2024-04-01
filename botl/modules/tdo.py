@@ -9,8 +9,9 @@
 import time
 
 
-from botl.objects import Object
-from botl.persist import fntime, find, laps, sync
+from ..handler import Client
+from ..object  import Object
+from ..persist import Persist, fntime, find, laps, sync
 
 
 class NoDate(Exception):
@@ -23,6 +24,9 @@ class Todo(Object):
     def __init__(self):
         Object.__init__(self)
         self.txt = ''
+
+
+Persist.add(Todo)
 
 
 def dne(event):
@@ -41,6 +45,9 @@ def dne(event):
         event.reply("nothing todo")
 
 
+Client.add(dne)
+
+
 def tdo(event):
     if not event.rest:
         nmr = 0
@@ -55,3 +62,6 @@ def tdo(event):
     obj.txt = event.rest
     sync(obj)
     event.reply('ok')
+
+
+Client.add(tdo)

@@ -10,8 +10,9 @@ import threading
 import time
 
 
-from botl.objects import Object, update
-from botl.persist import laps
+from ..object  import Object, update
+from ..handler import Client
+from ..persist import laps
 
 
 STARTTIME = time.time()
@@ -39,3 +40,6 @@ def thr(event):
         event.reply(' '.join(res))
     else:
         event.reply('no threads')
+
+
+Client.add(thr)

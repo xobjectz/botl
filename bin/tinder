@@ -21,10 +21,15 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
-from botl.objects import Default, Object, edit, fmt, keys, spl, update
-from botl.runtime import Broker, Client, Errors, Event, debug, launch, parse_cmd, scan
+from botl.broker import Broker
+from botl.errors import Errors, debug
+from botl.object import Default, Object, edit, fmt, keys, spl, update
+from botl.handler import Client, Event, parse_cmd
 from botl.persist import Workdir, laps, last, sync
+from botl.thread import launch
 
+
+from botl import modules
 
 STARTTIME = time.time()
 
@@ -40,12 +45,6 @@ Workdir.wd = Cfg.wd
 
 
 paylock = _thread.allocate_lock()
-
-
-if os.path.exists("mods"):
-    import mods
-else:
-    mods = None
 
 
 events = []
@@ -137,10 +136,7 @@ def main():
     global nrcommand
     global percall
     Errors.output = cprint
-    if mods:
-        mds = ",".join(mods.__dir__())
-        for mod in scan(mods, mds):
-            mod.DEBUG = True
+    modules.rss.DEBUG = True
     nrs = Cfg.index or 1
     nrcommand = len(Client.cmds) or 1
     cli = CLI()
@@ -161,7 +157,7 @@ if __name__ == "__main__":
     parse_cmd(Cfg, " ".join(sys.argv[1:]))
     dte = time.ctime(time.time()).replace("  ", " ")
     debug(f"{Cfg.name.upper()} {Cfg.opts.upper()} started {dte}")
-    Cfg.mod =  ",".join(mods.__dir__())
+    Cfg.mod =  ",".join(modules.__dir__())
     if "p" in Cfg.opts:
         profile.runctx(main.__code__, globals(), locals())
     else:

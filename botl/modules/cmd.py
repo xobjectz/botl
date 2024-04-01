@@ -6,8 +6,11 @@
 "list of commands"
 
 
-from botl.runtime import Client
+from ..handler import Client
 
 
 def cmd(event):
     event.reply(",".join(sorted(list(Client.cmds))))
+
+
+Client.add(cmd)

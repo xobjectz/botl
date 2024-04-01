@@ -13,8 +13,10 @@ import threading
 import time
 
 
-from botl.objects import Object
-from botl.runtime import Broker, launch
+from ..broker import Broker
+from ..handler import Client
+from ..object import Object
+from ..thread import launch
 
 
 def init():
@@ -114,3 +116,6 @@ def udp(event):
             toudp(Cfg.host, Cfg.port, txt)
         if stop:
             break
+
+
+Client.add(udp)

@@ -3,14 +3,15 @@
 # pylint: disable=R,C,E0402
 
 
-"llog text"
+"log text"
 
 
 import time
 
 
-from botl.objects  import Object
-from botl.persist import find, fntime, laps, sync
+from ..handler import Client
+from ..object  import Object
+from ..persist import Persist, find, fntime, laps, sync
 
 
 class Log(Object):
@@ -18,6 +19,9 @@ class Log(Object):
     def __init__(self):
         super().__init__()
         self.txt = ''
+
+
+Persist.add(Log)
 
 
 def log(event):
@@ -34,3 +38,6 @@ def log(event):
     obj.txt = event.rest
     sync(obj)
     event.reply('ok')
+
+
+Client.add(log)

@@ -6,7 +6,9 @@
 "fleet"
 
 
-from botl.runtime import Broker, name
+from ..broker  import Broker
+from ..handler import Client
+from ..thread  import name
 
 
 def flt(event):
@@ -14,3 +16,6 @@ def flt(event):
         event.reply(Broker.all()[int(event.args[0])])
     except (IndexError, ValueError):
         event.reply(",".join([name(x).split(".")[-1] for x in Broker.all()]))
+
+
+Client.add(flt)

@@ -1,12 +1,14 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0622,E0402
+# pylint: disable=C,R,W0622,E0402,W0105
 
 
 "status of bots"
 
 
-from botl.runtime import Broker, Errors
+from ..broker  import Broker
+from ..handler import Client
+from ..errors  import Errors
 
 
 def err(event):
@@ -20,3 +22,6 @@ def err(event):
         txt = Errors.format(exc)
         for line in txt.split():
             event.reply(line)
+
+
+Client.add(err)

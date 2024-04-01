@@ -14,13 +14,17 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from botl.objects import Default, Object
-from botl.persist import Persist, Workdir
-from botl.runtime import Errors, debug, launch
+from ..errors  import Errors, debug
+from ..object  import Default, Object
+from ..persist import Persist, Workdir
+from ..thread  import launch
 
 
 def init():
-    rest = REST((Config.hostname, int(Config.port)), RESTHandler)
+    try:
+        rest = REST((Config.hostname, int(Config.port)), RESTHandler)
+    except OSError:
+        return
     launch(rest.start)
     return rest
 

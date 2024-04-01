@@ -79,5 +79,11 @@ p.s.
 """
 
 
+from ..handler import Client
+
+
 def req(event):
     event.reply(__doc__)
+
+
+Client.add(req)

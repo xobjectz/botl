@@ -11,8 +11,9 @@ import os
 import time
 
 
-from botl.objects import Object, fmt, update
-from botl.persist import find, fntime, laps, sync
+from ..handler import Client
+from ..object  import Object, fmt, update
+from ..persist import Persist, find, fntime, laps, sync
 
 
 MONTH = {
@@ -36,6 +37,9 @@ class Email(Object):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text = ""
+
+
+Persist.add(Email)
 
 
 def to_date(date):
@@ -89,6 +93,8 @@ def cor(event):
         event.reply("%s %s %s" % (nr, fmt(email, txt, plain=True), laps(time.time() - fntime(email.__stp__))))
 
 
+Client.add(cor)
+
 
 def eml(event):
     if not event.args:
@@ -100,6 +106,8 @@ def eml(event):
             nr += 1
             event.reply("%s %s %s" % (nr, fmt(o, "From,Subject"), laps(time.time() - fntime(fn))))
 
+
+Client.add(eml)
 
 
 def mbx(event):
@@ -130,3 +138,6 @@ def mbx(event):
         nr += 1
     if nr:
         event.reply("ok %s" % nr)
+
+
+Client.add(mbx)
