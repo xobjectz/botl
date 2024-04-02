@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,E0402
+#
 
 
 "todo list"
@@ -13,6 +13,7 @@ from ..client  import Client
 from ..object  import Object
 from ..persist import Persist, fntime, find, sync
 from ..utils   import laps
+
 
 class NoDate(Exception):
 

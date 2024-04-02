@@ -1,6 +1,5 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105,W0612,W0718,E0402,W0201,W0603
 # ruff: noqa: F841
 
 
@@ -40,6 +39,7 @@ myirc = None
 
 
 def init():
+    "initialize a irc bot."
     global myirc
     irc = IRC()
     myirc = object.__repr__(irc)
@@ -49,6 +49,7 @@ def init():
 
 
 def shutdown():
+    "shutdown irc bot."
     debug(f"IRC stopping {myirc}")
     irc = Broker.get(myirc)
     if irc:
@@ -59,6 +60,8 @@ def shutdown():
 
 
 class Config(Default):
+
+    "Config"
 
     channel = f'#{NAME}'
     commands = True
@@ -91,6 +94,8 @@ Persist.add(Config)
 
 class TextWrap(textwrap.TextWrapper):
 
+    "TextWrap"
+
     def __init__(self):
         super().__init__()
         self.break_long_words = False
@@ -106,6 +111,8 @@ wrapper = TextWrap()
 
 class Output():
 
+    "Output"
+
     cache = Object()
 
     def __init__(self):
@@ -113,10 +120,12 @@ class Output():
         self.oqueue = queue.Queue()
 
     def dosay(self, channel, txt):
+        "overload this."
         raise NotImplementedError
 
     @staticmethod
     def extend(channel, txtlist):
+        "add list of txt to channel cache."
         if channel not in Output.cache:
             Output.cache[channel] = []
         chanlist = getattr(Output.cache, channel)
@@ -124,6 +133,7 @@ class Output():
 
     @staticmethod
     def gettxt(channel):
+        "return text from channel cache."
         txt = None
         try:
             che = getattr(Output.cache, channel, None)
@@ -134,11 +144,13 @@ class Output():
         return txt
 
     def oput(self, channel, txt):
+        "put text to output queue."
         if channel and channel not in dir(Output.cache):
             setattr(Output.cache, channel, [])
         self.oqueue.put_nowait((channel, txt))
 
     def out(self):
+        "output loop."
         while not self.dostop.is_set():
             (channel, txt) = self.oqueue.get()
             if channel is None and txt is None:
@@ -161,12 +173,15 @@ class Output():
 
     @staticmethod
     def size(chan):
+        "return size of channel cache."
         if chan in Output.cache:
             return len(getattr(Output.cache, chan, []))
         return 0
 
 
 class IRC(Client, Output):
+
+    "IRC"
 
     def __init__(self):
         Client.__init__(self)
@@ -201,6 +216,7 @@ class IRC(Client, Output):
         Broker.add(self)
 
     def announce(self, txt):
+        "announce on all channels."
         for channel in self.channels:
             self.oput(channel, txt)
 

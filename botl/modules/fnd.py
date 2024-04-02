@@ -1,9 +1,9 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,E0402
+#
 
 
-"locate"
+"find"
 
 
 from ..object  import fmt
@@ -11,6 +11,7 @@ from ..persist import Persist, Workdir, find
 
 
 def fnd(event):
+    "find objects."
     Workdir.skel()
     if not event.rest:
         res = sorted([x.split('.')[-1].lower() for x in Workdir.types()])

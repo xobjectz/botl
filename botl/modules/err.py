@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0622,E0402,W0105
+#
 
 
 "status of bots"
@@ -12,6 +12,7 @@ from ..errors  import Errors
 
 
 def err(event):
+    "show errors."
     nmr = 0
     for bot in Broker.all():
         if 'state' in dir(bot):
