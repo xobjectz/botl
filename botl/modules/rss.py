@@ -142,10 +142,10 @@ class Parser:
     @staticmethod
     def getvalue(line, attr):
         lne = ''
-        index1 = line.find(f' {attr}="')
+        index1 = line.find(f'{attr}="')
         if index1 == -1:
             return lne
-        index1 += len(attr) + 3
+        index1 += len(attr) + 2
         index2 = line.find('"', index1)
         if index2 == -1:
             index2 = line.find('"/>', index1)
@@ -194,7 +194,7 @@ class Parser:
         result = []
         stop = False
         while not stop:
-            index1 = text.find(f'<{token}>', index)
+            index1 = text.find(f'<{token}', index)
             if index1 == -1:
                 break
             index1 += len(token) + 2
@@ -220,7 +220,7 @@ class Parser:
                     val = striphtml(val)
                     setattr(obj, itm, val)
                 else:
-                    att = Parser.getattrs(line, itm)
+                    att = Parser.getattrs(line, toke)
                     if att:
                         if itm == "link":
                             itm = "href"
@@ -306,6 +306,22 @@ def dpl(event):
 Client.add(dpl)
 
 
+def exp(event):
+    event.reply(TEMPLATE)
+    nr = 0
+    for fnm, obj in find("rss"):
+        nr += 1
+        name = obj.name or f"url{nr}"
+        txt = f'<outline name={name} display_list={obj.display_list} xmlUrl="{obj.rss}"/>'
+        event.reply(" "*12 + txt)
+    event.reply(" "*8 + "</outline>")
+    event.reply("    <body>")
+    event.reply("</opml>")
+
+
+Client.add(exp)
+
+
 def nme(event):
     if len(event.args) != 2:
         event.reply('nme <stringinurl> <name>')
@@ -377,3 +393,11 @@ def rss(event):
 
 
 Client.add(rss)
+
+
+TEMPLATE = """<opml version="1.0">
+    <head>
+        <title>rssbot opml</title>
+    </head>
+    <body>
+        <outline title="rssbot opml" text="24/7 feed fetcher">"""
