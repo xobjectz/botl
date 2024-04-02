@@ -10,8 +10,8 @@ import threading
 import time
 
 
+from ..client  import Client
 from ..object  import Object, update
-from ..handler import Client
 from ..persist import laps
 
 

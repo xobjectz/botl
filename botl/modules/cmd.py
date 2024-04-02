@@ -6,7 +6,7 @@
 "list of commands"
 
 
-from ..handler import Client
+from ..client import Client
 
 
 def cmd(event):

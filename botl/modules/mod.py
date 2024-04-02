@@ -6,7 +6,7 @@
 "available modules"
 
 
-from ..handler import Client
+from ..client import Client
 
 
 from . import __dir__

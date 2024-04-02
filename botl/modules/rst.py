@@ -14,8 +14,9 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
+from ..default import Default
 from ..errors  import Errors, debug
-from ..object  import Default, Object
+from ..object  import Object
 from ..persist import Persist, Workdir
 from ..thread  import launch
 

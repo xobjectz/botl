@@ -14,7 +14,7 @@ import time
 
 
 from ..broker import Broker
-from ..handler import Client
+from ..client import Client
 from ..object import Object
 from ..thread import launch
 

@@ -11,7 +11,8 @@ import time
 
 
 from ..broker  import Broker
-from ..handler import Client, Event
+from ..client  import Client
+from ..event   import Event
 from ..object  import Object, construct, keys
 from ..persist import laps
 from ..thread  import Repeater, launch

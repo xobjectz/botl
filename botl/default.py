@@ -6,9 +6,6 @@
 "default values"
 
 
-import json
-
-
 from .object import Object
 
 

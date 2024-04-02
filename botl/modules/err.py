@@ -7,7 +7,7 @@
 
 
 from ..broker  import Broker
-from ..handler import Client
+from ..client  import Client
 from ..errors  import Errors
 
 

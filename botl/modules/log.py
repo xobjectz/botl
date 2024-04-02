@@ -9,7 +9,7 @@
 import time
 
 
-from ..handler import Client
+from ..client  import Client
 from ..object  import Object
 from ..persist import Persist, find, fntime, laps, sync
 

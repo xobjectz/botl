@@ -6,8 +6,8 @@
 "fleet"
 
 
+from ..client  import Client
 from ..broker  import Broker
-from ..handler import Client
 from ..thread  import name
 
 
