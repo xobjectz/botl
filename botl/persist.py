@@ -3,11 +3,7 @@
 # pylint: disable=C,R,W0105,E0402
 
 
-"""persistence
-
-Object persistence.
-
-"""
+"persistence"
 
 
 import datetime
@@ -16,34 +12,8 @@ import time
 
 
 from .default import Default
-from .object  import Object, cdir, fqn, read, search, update, write
-
-
-class Workdir(Object):
-
-    "Workdir"
-
-    wd = ""
-
-    @staticmethod
-    def skel():
-        "create directory,"
-        cdir(os.path.join(Workdir.wd, "store", ""))
-
-    @staticmethod
-    def store(pth=""):
-        "return objects directory."
-        return os.path.join(Workdir.wd, "store", pth)
-
-    @staticmethod
-    def strip(pth, nmr=3):
-        "reduce to path with directory."
-        return os.sep.join(pth.split(os.sep)[-nmr:])
-
-    @staticmethod
-    def types():
-        "return types stored."
-        return os.listdir(Workdir.store())
+from .object  import Object, fqn, read, search, update, write
+from .workdir import Workdir
 
 
 class Persist(Object):

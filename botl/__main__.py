@@ -23,7 +23,7 @@ from .errors  import Errors,debug
 from .event   import Event
 from .object  import cdir, spl
 from .parser  import parse_cmd
-from .persist import Workdir
+from .workdir import Workdir
 
 
 Cfg         = Default()
@@ -138,7 +138,7 @@ def ver(event):
 def main():
     Workdir.skel()
     Errors.enable(print)
-    Client.add(ver)
+    #Client.add(ver)
     parse_cmd(Cfg, " ".join(sys.argv[1:]))
     if 'a' in Cfg.opts:
         Cfg.mod = ",".join(mods.__dir__())
