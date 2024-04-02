@@ -21,12 +21,17 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
-from botl.broker import Broker
-from botl.errors import Errors, debug
-from botl.object import Default, Object, edit, fmt, keys, spl, update
-from botl.handler import Client, Event, parse_cmd
-from botl.persist import Workdir, laps, last, sync
-from botl.thread import launch
+from botl.broker  import Broker
+from botl.client  import Client
+from botl.default import Default
+from botl.errors  import Errors, debug
+from botl.event   import Event
+from botl.object  import Object, edit, fmt, keys, spl, update
+from botl.parser  import parse_cmd
+from botl.persist import last, sync
+from botl.thread  import launch
+from botl.utils   import laps
+from botl.workdir import Workdir
 
 
 from botl import modules
@@ -66,7 +71,7 @@ param.dpl = ["hnrss title,summary,link"]
 param.mre = ["2"]
 param.nme = ["hnrss hackernews"]
 param.pwd = ["bart bla"]
-param.rem = ["hnrss"]
+#param.rem = ["hnrss"]
 param.rss = ["http://hnrss.org/newest"]
 param.ver = [""]
 

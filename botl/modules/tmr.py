@@ -11,12 +11,13 @@ import re
 import time as ttime
 
 
-from ..broker import Broker
-from ..client import Client
-from ..event  import Event
-from ..object import update
-from ..persist import Persist, find, laps, sync
-from ..thread import Timer, launch
+from ..broker  import Broker
+from ..client  import Client
+from ..event   import Event
+from ..object  import update
+from ..persist import Persist, find, sync
+from ..thread  import Timer, launch
+from ..utils   import laps
 
 
 def init():

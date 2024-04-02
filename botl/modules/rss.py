@@ -22,9 +22,9 @@ from ..broker  import Broker
 from ..client  import Client
 from ..default import Default
 from ..object  import Object, fmt, spl, update
-from ..persist import Persist, find, fntime, laps, last, sync
+from ..persist import Persist, find, fntime, last, sync
 from ..thread  import Repeater, launch
-
+from ..utils   import laps
 
 def init():
     fetcher = Fetcher()

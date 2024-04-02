@@ -11,8 +11,8 @@ import time
 
 from ..client  import Client
 from ..object  import Object
-from ..persist import Persist, fntime, find, laps, sync
-
+from ..persist import Persist, fntime, find, sync
+from ..utils   import laps
 
 class NoDate(Exception):
 

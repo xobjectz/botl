@@ -12,7 +12,7 @@ import time
 
 from ..client  import Client
 from ..object  import Object, update
-from ..persist import laps
+from ..utils   import laps
 
 
 STARTTIME = time.time()

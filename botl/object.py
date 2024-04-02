@@ -3,14 +3,7 @@
 # pylint: disable=C,R,W0105,W0613,E0101
 
 
-"""a clean namespace
-
-This module allows for easy json save//load to/from disk of objects. It
-provides an "clean namespace" Object class that only has dunder
-methods, so the namespace is not cluttered with method names. This makes
-storing and reading to/from json possible.
-
-"""
+"object"
 
 
 import json

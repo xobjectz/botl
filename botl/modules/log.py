@@ -11,7 +11,8 @@ import time
 
 from ..client  import Client
 from ..object  import Object
-from ..persist import Persist, find, fntime, laps, sync
+from ..persist import Persist, find, fntime, sync
+from ..utils   import laps
 
 
 class Log(Object):

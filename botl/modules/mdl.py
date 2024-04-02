@@ -14,8 +14,8 @@ from ..broker  import Broker
 from ..client  import Client
 from ..event   import Event
 from ..object  import Object, construct, keys
-from ..persist import laps
 from ..thread  import Repeater, launch
+from ..utils   import laps
 
 
 def __dir__():

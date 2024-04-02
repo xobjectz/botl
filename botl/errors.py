@@ -3,11 +3,7 @@
 # pylint: disable=C,R,W0105,W0212,W0613,W0718,E0402,E1102
 
 
-""""deferred exception handling
-
-This module allows for exceptions to be dealt with on a later moment.
-
-"""
+"errors"
 
 
 import io
