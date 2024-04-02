@@ -143,7 +143,7 @@ SYSTEMD
     User=<user>
     Group=<user>
     WorkingDirectory=/home/<user>/.botl
-    ExecStart=/home/<user>/.local/pipx/venvs/botl/bin/botld
+    ExecStart=/home/<user>/.local/pipx/venvs/botl/bin/botl -d
     RemainAfterExit=yes
 
     [Install]

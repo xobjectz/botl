@@ -22,6 +22,10 @@ classifiers = [
     'Topic :: Utilities'
 ]
 
+[project.scripts]
+"botl" = "botl.__main__:wrapped"
+
+
 [project.urls]
 "home" = "https://pypi.org/project/botl"
 "bugs" = "https://github.com/xobjectz/botl/issues"
@@ -29,9 +33,6 @@ classifiers = [
 
 
 [tool.setuptools]
-script-files = [
-    'bin/botl',
-]
 packages = [
     "botl",
     "botl.modules"
