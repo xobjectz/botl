@@ -28,7 +28,7 @@ from .persist import Workdir
 Cfg         = Default()
 Cfg.mod     = "cmd,mod"
 Cfg.name    = "botl"
-Cfg.version = "104"
+Cfg.version = "105"
 Cfg.wd      = os.path.expanduser(f"~/.{Cfg.name}")
 Cfg.pidfile = os.path.join(Cfg.wd, f"{Cfg.name}.pid")
 Workdir.wd = Cfg.wd
