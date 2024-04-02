@@ -10,12 +10,13 @@ import datetime
 import time
 
 
-from ..broker  import Broker
-from ..client  import Client
-from ..event   import Event
-from ..object  import Object, construct, keys
-from ..thread  import Repeater, launch
-from ..utils   import laps
+from ..broker   import Broker
+from ..client   import Client
+from ..event    import Event
+from ..object   import Object, construct, keys
+from ..repeater import Repeater
+from ..thread   import launch
+from ..utils    import laps
 
 
 def __dir__():

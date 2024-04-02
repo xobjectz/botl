@@ -16,7 +16,8 @@ from ..client  import Client
 from ..event   import Event
 from ..object  import update
 from ..persist import Persist, find, sync
-from ..thread  import Timer, launch
+from ..thread  import launch
+from ..timer   import Timer
 from ..utils   import laps
 
 

@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105,W0613,E0101
+#
 
 
 "object"
@@ -163,7 +163,7 @@ class ObjectDecoder(json.JSONDecoder):
     "ObjectDecoder"
 
     def __init__(self, *args, **kwargs):
-        return json.JSONDecoder.__init__(self, *args)
+        json.JSONDecoder.__init__(self, *args, **kwargs)
 
     def decode(self, s, _w=None):
         "decoding string to object."
@@ -206,7 +206,7 @@ class ObjectEncoder(json.JSONEncoder):
     "ObjectEncoder"
 
     def __init__(self, *args, **kwargs):
-        return json.JSONEncoder.__init__(self, *args, **kwargs)
+        json.JSONEncoder.__init__(self, *args, **kwargs)
 
     def default(self, o):
         "return stringable value."
@@ -244,27 +244,12 @@ def dumps(*args, **kw):
     return json.dumps(*args, **kw)
 
 
-"utilities"
-
-
 def cdir(pth):
     "create directory."
     if os.path.exists(pth):
         return
     pth = pathlib.Path(pth)
     os.makedirs(pth, exist_ok=True)
-
-
-def spl(txt):
-    "split comma separated string into a list."
-    try:
-        res = txt.split(',')
-    except (TypeError, ValueError):
-        res = txt
-    return [x for x in res if x]
-
-
-"interface"
 
 
 def __dir__():

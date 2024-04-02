@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105,E0402
+#
 
 
 "utils"
@@ -46,12 +46,19 @@ def laps(seconds, short=True):
     return txt
 
 
-"interface"
+def spl(txt):
+    "split comma separated string into a list."
+    try:
+        res = txt.split(',')
+    except (TypeError, ValueError):
+        res = txt
+    return [x for x in res if x]
 
 
 def __dir__():
     return (
         'laps',
+        'spl'
     )
 
 

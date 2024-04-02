@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105,E0402
+#
 
 
 "persist"
@@ -76,7 +76,7 @@ def fntime(daystr):
 def find(mtc, selector=None, index=None, deleted=False):
     "find object matching the selector dict."
     clz = Persist.long(mtc)
-    nr = -1
+    nrs = -1
     for fnm in sorted(Persist.fns(clz), key=fntime):
         obj = Default()
         fetch(obj, fnm)
@@ -84,8 +84,8 @@ def find(mtc, selector=None, index=None, deleted=False):
             continue
         if selector and not search(obj, selector):
             continue
-        nr += 1 
-        if index is not None and nr != int(index):
+        nrs += 1
+        if index is not None and nrs != int(index):
             continue
         yield (fnm, obj)
 
@@ -104,6 +104,7 @@ def ident(obj):
                         os.path.join(*str(datetime.datetime.now()).split())
                        )
 
+
 def last(obj, selector=None):
     "return last object saved."
     if selector is None:
@@ -115,8 +116,8 @@ def last(obj, selector=None):
     if result:
         inp = result[-1]
         update(obj, inp[-1])
-        return inp[0]
-
+        result = inp[0]
+    return result
 
 def sync(obj, pth=None):
     "sync object to disk."
@@ -125,9 +126,6 @@ def sync(obj, pth=None):
     pth2 = Workdir.store(pth)
     write(obj, pth2)
     return pth
-
-
-"interface"
 
 
 def __dir__():

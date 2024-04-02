@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105,W0212,W0613,W0718,E0402,E1102
+# pylint: disable=W0718
 
 
 "client"
@@ -41,7 +41,7 @@ class Client(Handler):
         if func:
             try:
                 func(evt)
-            except Exception as exc:
+            except BaseException as exc:
                 Errors.add(exc)
         self.show(evt)
         evt.ready()
@@ -51,7 +51,8 @@ class Client(Handler):
 
     def say(self, channel, txt):
         "say text in a channel."
-        self.raw(txt)
+        if channel:
+            self.raw(txt)
 
     def show(self, evt):
         "show results into a channel."
@@ -69,8 +70,6 @@ def cmnd(txt, out):
     clt.command(evn)
     evn.wait()
     return evn
-
-"interface"
 
 
 def __dir__():

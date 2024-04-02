@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105,W0718
+#
 
 
 "timer"
@@ -8,6 +8,9 @@
 
 import threading
 import time
+
+
+from .thread import launch
 
 
 class Timer:
@@ -44,9 +47,6 @@ class Timer:
         "stop timer."
         if self.timer:
             self.timer.cancel()
-
-
-"interface"
 
 
 def __dir__():

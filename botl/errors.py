@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105,W0212,W0613,W0718,E0402,E1102
+#
 
 
 "errors"
@@ -16,7 +16,7 @@ class Errors:
 
     errors = []
     filter = []
-    output = None
+    output = print
     shown  = []
 
     @staticmethod
@@ -48,9 +48,10 @@ class Errors:
     @staticmethod
     def out(exc):
         "check if output function is set."
-        if Errors.output:
-            txt = str(Errors.format(exc))
-            Errors.output(txt)
+        if Errors.output is None:
+            return
+        txt = str(Errors.format(exc))
+        Errors.output(txt)
 
     @staticmethod
     def show():
@@ -71,9 +72,6 @@ def debug(txt):
     "debug text"
     if Errors.output and not Errors.skip(txt):
         Errors.output(txt)
-
-
-"interfacce"
 
 
 def __dir__():

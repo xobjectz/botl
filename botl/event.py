@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105,W0212,W0613,W0718,E0402,E1102
+# pylint: disable=R0902
 
 
 "event"
@@ -18,11 +18,11 @@ class Event(Default):
 
     def __init__(self):
         Default.__init__(self)
-        self._thr    = None
         self._ready  = threading.Event()
         self.done    = False
         self.orig    = None
         self.result  = []
+        self.thr    = None
         self.txt     = ""
         self.type    = "event"
 
@@ -36,7 +36,16 @@ class Event(Default):
 
     def wait(self):
         "wait for event to be ready."
-        if self._thr:
-            self._thr.join()
+        if self.thr:
+            self.thr.join()
         self._ready.wait()
         return self.result
+
+
+def __dir__():
+    return (
+        'Event',
+    )
+
+
+__all__ = __dir__()

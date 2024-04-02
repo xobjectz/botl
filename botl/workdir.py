@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105,E0402
+#
 
 
 "working directory"
@@ -16,17 +16,17 @@ class Workdir(Object):
 
     "Workdir"
 
-    wd = ""
+    workdir = ""
 
     @staticmethod
     def skel():
         "create directory,"
-        cdir(os.path.join(Workdir.wd, "store", ""))
+        cdir(os.path.join(Workdir.workdir, "store", ""))
 
     @staticmethod
     def store(pth=""):
         "return objects directory."
-        return os.path.join(Workdir.wd, "store", pth)
+        return os.path.join(Workdir.workdir, "store", pth)
 
     @staticmethod
     def strip(pth, nmr=3):
@@ -37,9 +37,6 @@ class Workdir(Object):
     def types():
         "return types stored."
         return os.listdir(Workdir.store())
-
-
-"interface"
 
 
 def __dir__():

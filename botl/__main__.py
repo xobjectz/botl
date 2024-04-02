@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105,W0201,W0212,W0613,E0401,E0402,E0611
+# pylint: disable=W0212,C0413
 # ruff: noqa: E402
 
 
@@ -21,8 +21,9 @@ from .client  import Client, cmnd
 from .default import Default
 from .errors  import Errors,debug
 from .event   import Event
-from .object  import cdir, spl
+from .object  import cdir
 from .parser  import parse_cmd
+from .utils   import spl
 from .workdir import Workdir
 
 
@@ -30,18 +31,12 @@ Cfg         = Default()
 Cfg.mod     = "cmd,mod"
 Cfg.name    = "botl"
 Cfg.version = "105"
-Cfg.wd      = os.path.expanduser(f"~/.{Cfg.name}")
+Cfg.workdir      = os.path.expanduser(f"~/.{Cfg.name}")
 Cfg.pidfile = os.path.join(Cfg.wd, f"{Cfg.name}.pid")
-Workdir.wd = Cfg.wd
+Workdir.workdir = Cfg.workdir
 
 
 from . import modules
-
-
-if os.path.exists("mods"):
-    import mods
-else:
-    mods = None
 
 
 dte = time.ctime(time.time()).replace("  ", " ")
@@ -49,18 +44,22 @@ dte = time.ctime(time.time()).replace("  ", " ")
 
 class Console(Client):
 
+    "Console"
+
     def __init__(self):
         Client.__init__(self)
         Broker.add(self)
 
     def announce(self, txt):
-        pass
+        "blind announce"
 
     def callback(self, evt):
+        "run and wait for callback to finish."
         Client.callback(self, evt)
         evt.wait()
 
     def poll(self):
+        "reconstruct event from input."
         evt = Event()
         evt.orig = object.__repr__(self)
         evt.txt = input("> ")
@@ -68,11 +67,13 @@ class Console(Client):
         return evt
 
     def say(self, channel, txt):
+        "say text in channel."
         txt = txt.encode('utf-8', 'replace').decode()
         print(txt)
 
 
 def daemon(pidfile, verbose=False):
+    "fork into the background."
     pid = os.fork()
     if pid != 0:
         os._exit(0)
@@ -97,6 +98,7 @@ def daemon(pidfile, verbose=False):
 
 
 def init(pkg, modstr, disable=""):
+    "start inits in modules."
     mds = []
     for modname in spl(modstr):
         if modname in spl(disable):
@@ -111,12 +113,14 @@ def init(pkg, modstr, disable=""):
 
 
 def privileges(username):
+    "lower privileges."
     pwnam = pwd.getpwnam(username)
     os.setgid(pwnam.pw_gid)
     os.setuid(pwnam.pw_uid)
 
 
 def wrap(func):
+    "restore terminal"
     old2 = None
     try:
         old2 = termios.tcgetattr(sys.stdin.fileno())
@@ -132,22 +136,24 @@ def wrap(func):
 
 
 def ver(event):
+    "show version."
     event.reply(f"{Cfg.name.upper()} {Cfg.version}")
 
 
 def main():
+    "main code"
     Workdir.skel()
     Errors.enable(print)
     #Client.add(ver)
     parse_cmd(Cfg, " ".join(sys.argv[1:]))
+    result = None
     if 'a' in Cfg.opts:
-        Cfg.mod = ",".join(mods.__dir__())
-        Cfg.mod += "," + ",".join(modules.__dir__())
+        Cfg.mod = "," + ",".join(modules.__dir__())
     if "v" in Cfg.opts:
         debug(f"{Cfg.name.upper()} {Cfg.opts.upper()} started {dte}")
     if "h" in Cfg.opts:
         print(__doc__)
-        return
+        return result
     if "d" in Cfg.opts:
         Cfg.mod = ",".join(modules.__dir__())
         Cfg.user = getpass.getuser()
@@ -156,20 +162,21 @@ def main():
         init(modules, Cfg.mod)
         while 1:
             time.sleep(1.0)
-        return
+        return result
     if "c" in Cfg.opts:
         init(modules, Cfg.mod)
-        init(mods, Cfg.mod)
         csl = Console()
         csl.start()
         while 1:
             time.sleep(1.0)
-        return
+        return result
     if Cfg.otxt:
         return cmnd(Cfg.otxt, print)
+    return result
 
 
 def wrapped():
+    "wrapped code"
     wrap(main)
     Errors.show()
 
