@@ -11,10 +11,11 @@ import threading
 import _thread
 
 
-from .broker import Broker
-from .errors import Errors
-from .object import Default, Object
-from .thread import launch
+from .broker  import Broker
+from .default import Default
+from .errors  import Errors
+from .object  import Object
+from .thread  import launch
 
 
 class Event(Default):

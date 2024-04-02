@@ -17,9 +17,10 @@ import time
 
 
 from .broker  import Broker
+from .default import Default
 from .errors  import debug
 from .handler import Client, Event, cmnd, parse_cmd
-from .object  import Default, cdir, spl
+from .object  import cdir, spl
 from .errors  import Errors
 from .persist import Workdir
 

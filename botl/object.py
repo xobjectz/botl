@@ -251,18 +251,7 @@ def dumps(*args, **kw):
     return json.dumps(*args, **kw)
 
 
-class Default(Object):
-
-    "Default"
-
-    __slots__ = ("__default__",)
-
-    def __init__(self):
-        Object.__init__(self)
-        self.__default__ = ""
-
-    def __getattr__(self, key):
-        return self.__dict__.get(key, self.__default__)
+"utilities"
 
 
 def cdir(pth):
@@ -287,7 +276,6 @@ def spl(txt):
 
 def __dir__():
     return (
-        'Default',
         'Object',
         'construct',
         'dump',

@@ -19,9 +19,10 @@ import _thread
 
 
 from ..broker  import Broker
+from ..default import Default
 from ..handler import Client, Event
 from ..errors  import Errors, debug
-from ..object  import Default, Object, edit, fmt, keys
+from ..object  import Object, edit, fmt, keys
 from ..persist import Persist, last, sync
 from ..thread  import launch
 
