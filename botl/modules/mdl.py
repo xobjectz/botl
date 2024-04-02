@@ -10,11 +10,11 @@ import datetime
 import time
 
 
-from botl.broker  import Broker
-from botl.handler import Event
-from botl.object  import Object, construct, keys
-from botl.persist import laps
-from botl.thread  import Repeater, launch
+from ..broker  import Broker
+from ..handler import Event
+from ..object  import Object, construct, keys
+from ..persist import laps
+from ..thread  import Repeater, launch
 
 
 def __dir__():

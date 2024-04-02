@@ -16,6 +16,8 @@ import traceback
 
 class Errors:
 
+    "Errors"
+
     errors = []
     filter = []
     output = None

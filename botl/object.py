@@ -24,7 +24,7 @@ disklock = _thread.allocate_lock()
 
 class Object:
 
-    "Base class."
+    "Object"
 
     def __contains__(self, key):
         return key in dir(self)
@@ -167,7 +167,7 @@ def write(obj, pth):
 
 class ObjectDecoder(json.JSONDecoder):
 
-    "Object decoded"
+    "ObjectDecoder"
 
     def __init__(self, *args, **kwargs):
         return json.JSONDecoder.__init__(self, *args)
@@ -210,7 +210,7 @@ def loads(string, *args, **kw):
 
 class ObjectEncoder(json.JSONEncoder):
 
-    "Object encoder."
+    "ObjectEncoder"
 
     def __init__(self, *args, **kwargs):
         return json.JSONEncoder.__init__(self, *args, **kwargs)
@@ -253,7 +253,7 @@ def dumps(*args, **kw):
 
 class Default(Object):
 
-    "Object that return a default value if key does not exist."
+    "Default"
 
     __slots__ = ("__default__",)
 

@@ -20,7 +20,7 @@ from .object import Default, Object, cdir, fqn, read, search, update, write
 
 class Workdir(Object):
 
-    "directory to store objects."
+    "Workdir"
 
     wd = ""
 
@@ -47,7 +47,7 @@ class Workdir(Object):
 
 class Persist(Object):
 
-    "whitelist of types saveable to disk."
+    "Persist"
 
     classes = Object()
 
@@ -209,9 +209,7 @@ def __dir__():
         'laps',
         'last',
         'ident',
-        'read',
         'sync',
-        'write'
     )
 
 

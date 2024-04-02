@@ -28,6 +28,8 @@ rpr = object.__repr__
 
 class Broker:
 
+    "Broker"
+
     objs = Object()
 
     @staticmethod

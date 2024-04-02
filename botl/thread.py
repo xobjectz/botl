@@ -21,7 +21,7 @@ from .errors import Errors
 
 class Thread(threading.Thread):
 
-    "Thread with deferred exception handling."
+    "Thread"
 
     def __init__(self, func, thrname, *args, daemon=True, **kwargs):
         super().__init__(None, self.run, thrname, (), {}, daemon=daemon)
@@ -57,7 +57,7 @@ class Thread(threading.Thread):
 
 class Timer:
 
-    "run a function at a specific time."
+    "Timer"
 
     def __init__(self, sleep, func, *args, thrname=None):
         self.args  = args
@@ -93,7 +93,7 @@ class Timer:
 
 class Repeater(Timer):
 
-    "Repeat a timer every x seconds."
+    "Repeater"
 
     def run(self):
         launch(self.start)
