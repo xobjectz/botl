@@ -11,7 +11,7 @@ import time
 
 
 from ..broker  import Broker
-from ..handler import Event
+from ..handler import Client, Event
 from ..object  import Object, construct, keys
 from ..persist import laps
 from ..thread  import Repeater, launch
@@ -385,6 +385,9 @@ def now(event):
         event.reply(txt)
     else:
         event.reply("not needed")
+
+
+Client.add(now)
 
 
 def boot():
