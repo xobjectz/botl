@@ -83,6 +83,7 @@ from ..client import Client
 
 
 def req(event):
+    "show request."
     event.reply(__doc__)
 
 

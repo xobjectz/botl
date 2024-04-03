@@ -22,29 +22,39 @@ from ..thread  import launch
 
 
 def init():
+    "start object server."
+    result = None
     try:
-        rest = REST((Config.hostname, int(Config.port)), RESTHandler)
+        result = REST((Config.hostname, int(Config.port)), RESTHandler)
     except OSError:
-        return
-    launch(rest.start)
-    return rest
+        pass
+    if result:
+        launch(result.start)
+    return result
 
 
 def html(txt):
-    return """<!doctype html>
-<html>
-   %s
-</html>
-""" % txt
+    "html template."
+    return f"<!doctype html><html>{txt}</html>"
 
 
 class Config(Default):
 
+    "Config"
+
     hostname = "localhost"
     port     = 10102
 
+    def __bla__(self):
+        pass
+
+    def __blabla__(self):
+        pass
+
 
 class REST(HTTPServer, Object):
+
+    "REST"
 
     allow_reuse_address = True
     daemon_thread = True
@@ -58,42 +68,53 @@ class REST(HTTPServer, Object):
         self._status = "start"
 
     def exit(self):
+        "shutdown server."
         self._status = ""
         time.sleep(0.2)
         self.shutdown()
 
-    def start(self): 
+    def start(self):
+        "start server/"
         self._status = "ok"
         self.serve_forever()
 
     def request(self):
+        "handler request."
         self._last = time.time()
 
     def error(self, request, addr):
-        exctype, excvalue, tb = sys.exc_info()
+        "handle error."
+        exctype, excvalue, _tb = sys.exc_info()
         exc = exctype(excvalue)
         Errors.add(exc)
-        debug('%s %s' % (addr, excvalue))
+        if request:
+            debug(f'{addr} {excvalue}')
 
 
 class RESTHandler(BaseHTTPRequestHandler):
 
+    "RESTHandler"
+
     def setup(self):
+        "setup request."
         BaseHTTPRequestHandler.setup(self)
         self._ip = self.client_address[0]
         self._size = 0
 
     def send(self, txt):
+        "send text."
         self.wfile.write(bytes(txt, "utf-8"))
         self.wfile.flush()
 
     def write_header(self, htype='text/plain'):
+        "write a header."
         self.send_response(200)
-        self.send_header('Content-type', '%s; charset=%s ' % (htype, "utf-8"))
+        self.send_header('Content-type', f'{htype}; charset="utf-8"')
         self.send_header('Server', "1")
         self.end_headers()
 
-    def do_GET(self):
+    def do_GET(self): # pylint: disable=C0103
+        "handle GET."
         if self.path == "/":
             self.write_header("text/html")
             txt = ""
@@ -103,15 +124,15 @@ class RESTHandler(BaseHTTPRequestHandler):
             return
         fnm = Workdir.workdir + os.sep + "store" + os.sep + self.path
         try:
-            f = open(fnm, "r", encoding="utf-8")
-            txt = f.read()
-            f.close()
-            self.write_header("txt/plain")
-            self.send(html(txt))
+            with open(fnm, "r", encoding="utf-8") as file:
+                txt = file.read()
+                self.write_header("txt/plain")
+                self.send(html(txt))
         except (TypeError, FileNotFoundError, IsADirectoryError) as ex:
             self.send_response(404)
             Errors.add(ex)
             self.end_headers()
 
     def log(self, code):
-        debug('%s code %s path %s' % (self.address_string(), code, self.path))
+        "log access."
+        debug(f"{self.address_string()} code {code} path {self.path}")

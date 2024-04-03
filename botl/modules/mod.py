@@ -13,6 +13,7 @@ from . import __dir__
 
 
 def mod(event):
+    "list modules."
     event.reply(",".join(sorted(__dir__())))
 
 

@@ -9,6 +9,9 @@
 import time
 
 
+from dataclasses import dataclass
+
+
 from ..client  import Client
 from ..object  import Object
 from ..persist import Persist, fntime, find, sync
@@ -17,20 +20,22 @@ from ..utils   import laps
 
 class NoDate(Exception):
 
-    pass
+    "NoDate"
 
 
+@dataclass
 class Todo(Object):
 
-    def __init__(self):
-        Object.__init__(self)
-        self.txt = ''
+    "Todo"
+
+    txt: str = ''
 
 
 Persist.add(Todo)
 
 
 def dne(event):
+    "mark todo as done."
     if not event.args:
         event.reply("dne <txt>")
         return
@@ -50,6 +55,7 @@ Client.add(dne)
 
 
 def tdo(event):
+    "add a todo."
     if not event.rest:
         nmr = 0
         for fnm, obj in find('todo'):
