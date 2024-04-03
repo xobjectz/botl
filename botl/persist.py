@@ -113,11 +113,12 @@ def last(obj, selector=None):
                     find(fqn(obj), selector),
                     key=lambda x: fntime(x[0])
                    )
+    res = None
     if result:
         inp = result[-1]
         update(obj, inp[-1])
-        result = inp[0]
-    return result
+        res = inp[0]
+    return res
 
 def sync(obj, pth=None):
     "sync object to disk."

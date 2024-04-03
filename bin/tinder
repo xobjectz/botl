@@ -26,11 +26,11 @@ from botl.client  import Client
 from botl.default import Default
 from botl.errors  import Errors, debug
 from botl.event   import Event
-from botl.object  import Object, edit, fmt, keys, spl, update
+from botl.object  import Object, edit, fmt, keys, update
 from botl.parser  import parse_cmd
 from botl.persist import last, sync
 from botl.thread  import launch
-from botl.utils   import laps
+from botl.utils   import laps, spl
 from botl.workdir import Workdir
 
 
