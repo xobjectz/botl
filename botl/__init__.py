@@ -3,4 +3,4 @@
 # pylint: disable=C,R
 
 
-"package"
+"bot library"

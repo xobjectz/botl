@@ -27,10 +27,9 @@ from .workdir import Workdir
 
 from . import modules
 
-
 Cfg          = Default()
 Cfg.mod      = "cmd,mod"
-Cfg.name     = "botl"
+Cfg.name     = sys.argv[0].split(os.sep)[-2]
 Cfg.version  = "106"
 Cfg.dir      = os.path.expanduser(f"~/.{Cfg.name}")
 Cfg.pidfile  = os.path.join(Cfg.wd, f"{Cfg.name}.pid")

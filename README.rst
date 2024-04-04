@@ -10,7 +10,7 @@ SYNOPSIS
 ::
 
     botl <cmd> [key=val] [key==val]
-    botl [-a] [-c] [-d] [-h] [-v] [-w]
+    botl [-a] [-c] [-d] [-h] [-v]
 
     options are:
 
