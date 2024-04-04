@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105
+# pylint: disable=C,R,W0105,W0212
 # ruff: noqa: E402
 
 
@@ -31,14 +31,14 @@ from . import modules
 Cfg          = Default()
 Cfg.mod      = "cmd,mod"
 Cfg.name     = "botl"
-Cfg.version  = "105"
+Cfg.version  = "106"
 Cfg.dir      = os.path.expanduser(f"~/.{Cfg.name}")
 Cfg.pidfile  = os.path.join(Cfg.wd, f"{Cfg.name}.pid")
 Workdir.workdir = Cfg.dir
 
 
 dte = time.ctime(time.time()).replace("  ", " ")
-ext = os._exit # pylint: disable=W0212
+ext = os._exit 
 
 
 class Console(Client):

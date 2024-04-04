@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C0116
+# pylint: disable=C,R,W0105
 
 
 "clean directories"
@@ -15,6 +15,7 @@ SKIP = ["env", ".git"]
 
 
 def loop(path, txt):
+    "loop"
     old = os.getcwd()
     os.chdir(path)
     for fnn in os.listdir(path):
@@ -34,12 +35,14 @@ def loop(path, txt):
 
 
 def popen(txt):
+    "popen"
     for line in os.popen(txt).readlines():
         print(line.rstrip())
         sys.stdout.flush()
 
 
 def main():
+    "main"
     popen("rm -fRv DEAD* build dist MANIFEST *.egg-info *.whl")
     popen("rm -fRv .pytest_cache .test __pycache__ .ruff_cache")
     popen("rm -fRv lib/*.egg-info")

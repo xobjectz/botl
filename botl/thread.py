@@ -12,6 +12,9 @@ import time
 import types
 
 
+from .errors import Errors
+
+
 class Thread(threading.Thread):
 
     "Thread"

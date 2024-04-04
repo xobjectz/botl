@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# pylint: disable=C,R
+# pylint: disable=C,R,W0105
 
 
 "sed line for line"
@@ -12,6 +12,7 @@ import subprocess
 
 
 def popen(txt):
+    "popen"
     with subprocess.Popen(
                           txt.split(),
                           stdin=sys.stdin,
@@ -25,6 +26,7 @@ def popen(txt):
 
 
 def main():
+    "main"
     try:
         path  = sys.argv[1]
         fromm = sys.argv[2]
