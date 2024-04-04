@@ -34,4 +34,4 @@ def fnd(event):
         event.reply("no result")
 
 
-Client.add(fnd)
+#Client.add(fnd)
