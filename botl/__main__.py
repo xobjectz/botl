@@ -1,5 +1,6 @@
 # This file is placed in the Public Domain.
 #
+# pylint: disable=C,R,W0105
 # ruff: noqa: E402
 
 
@@ -132,6 +133,9 @@ def wrap(func):
 def ver(event):
     "show version."
     event.reply(f"{Cfg.name.upper()} {Cfg.version}")
+
+
+"runtime"
 
 
 def main():

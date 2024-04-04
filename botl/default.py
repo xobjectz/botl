@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=R0902,R0903
+# pylint: disable=C,R,W0105
 
 
 "default"
@@ -15,6 +15,9 @@ class Default(Object):
 
     def __getattr__(self, key):
         return self.__dict__.get(key, "")
+
+
+"interface"
 
 
 def __dir__():

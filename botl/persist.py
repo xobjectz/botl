@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-#
+# pylint: disable=C,R,W0105
 
 
 "persist"
@@ -127,6 +127,9 @@ def sync(obj, pth=None):
     pth2 = Workdir.store(pth)
     write(obj, pth2)
     return pth
+
+
+"interface"
 
 
 def __dir__():

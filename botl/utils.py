@@ -1,9 +1,9 @@
 # This file is placed in the Public Domain.
 #
-#
+# pylint: disable=C,R,W0105
 
 
-"utils"
+"utilities"
 
 
 def laps(seconds, short=True):
@@ -53,6 +53,9 @@ def spl(txt):
     except (TypeError, ValueError):
         res = txt
     return [x for x in res if x]
+
+
+"interface"
 
 
 def __dir__():

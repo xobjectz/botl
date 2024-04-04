@@ -14,7 +14,7 @@ from botl.object import Object
 
 
 class Mix:
-   a = "b"
+    a = "b"
 
 
 class Mixin(Mix, Object):

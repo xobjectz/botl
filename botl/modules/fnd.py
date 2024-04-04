@@ -1,11 +1,12 @@
 # This file is placed in the Public Domain.
 #
-#
+# pylint: disable=C,R
 
 
 "find"
 
 
+from ..client  import Client
 from ..object  import fmt
 from ..persist import Persist, Workdir, find
 
@@ -31,3 +32,6 @@ def fnd(event):
         nmr += 1
     if not nmr:
         event.reply("no result")
+
+
+Client.add(fnd)

@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-#
+# pylint: disable=C,R,W0105
 
 
 "errors"
@@ -72,6 +72,9 @@ def debug(txt):
     "debug text"
     if Errors.output and not Errors.skip(txt):
         Errors.output(txt)
+
+
+"interface"
 
 
 def __dir__():

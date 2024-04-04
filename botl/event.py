@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=R0902
+# pylint: disable=C,R,W0105
 
 
 "event"
@@ -40,6 +40,9 @@ class Event(Default):
             self.thr.join()
         self._ready.wait(sec)
         return self.result
+
+
+"interface"
 
 
 def __dir__():

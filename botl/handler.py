@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-#
+# pylint: disable=C,R,W0105
 
 
 "handler"
@@ -38,11 +38,11 @@ class Handler:
             try:
                 evt = self.poll()
                 self.callback(evt)
+            except (KeyboardInterrupt, EOFError):
+                _thread.interrupt_main()
             except Exception as ex: # pylint: disable=W0718
                 Errors.add(ex)
                 evt.ready()
-            except (KeyboardInterrupt, EOFError):
-                _thread.interrupt_main()
 
     def poll(self):
         "function to return event."
@@ -63,6 +63,9 @@ class Handler:
     def stop(self):
         "stop the event loop."
         self.stopped.set()
+
+
+"interface"
 
 
 def __dir__():

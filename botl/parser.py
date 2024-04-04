@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-#
+# pylint: disable=C,R,W0105
 
 
 "parser"
@@ -61,6 +61,9 @@ def parse_cmd(obj, txt=None):
         obj.txt  = obj.cmd + " " + obj.rest
     else:
         obj.txt = obj.cmd or ""
+
+
+"interface"
 
 
 def __dir__():

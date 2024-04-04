@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=R,W0718
+# pylint: disable=C,R,W0718
 # ruff: noqa: F841
 
 

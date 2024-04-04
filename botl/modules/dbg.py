@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-#
+# pylint: disable=C,R
 
 
 "debug"
@@ -19,4 +19,4 @@ def dbg(event):
     raise MyBug("yo!")
 
 
-#Client.add(dbg)
+Client.add(dbg)

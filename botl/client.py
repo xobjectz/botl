@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=W0718
+# pylint: disable=C,R.W0105,W0718
 
 
 "client"
@@ -65,6 +65,9 @@ def cmnd(txt, out):
     clt.command(evn)
     evn.wait()
     return evn
+
+
+"interface"
 
 
 def __dir__():

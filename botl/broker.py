@@ -1,4 +1,6 @@
 # This file is placed in the Public Domain.
+#
+# pylint: disable=C,R,W0105
 
 
 "broker"
@@ -41,6 +43,9 @@ class Broker:
     def remove(obj):
         "remove object from broker"
         delattr(Broker.objs, rpr(obj))
+
+
+"interface"
 
 
 def __dir__():

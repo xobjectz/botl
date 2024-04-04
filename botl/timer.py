@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-#
+# pylint: disable=C,R,W0105
 
 
 "timer"
@@ -47,6 +47,9 @@ class Timer:
         "stop timer."
         if self.timer:
             self.timer.cancel()
+
+
+"interface"
 
 
 def __dir__():
