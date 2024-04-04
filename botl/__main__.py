@@ -30,7 +30,6 @@ from . import modules
 Cfg          = Default()
 Cfg.mod      = "cmd,mod"
 Cfg.name     = sys.argv[0].split(os.sep)[-2]
-Cfg.version  = "106"
 Cfg.dir      = os.path.expanduser(f"~/.{Cfg.name}")
 Cfg.pidfile  = os.path.join(Cfg.wd, f"{Cfg.name}.pid")
 Workdir.workdir = Cfg.dir
@@ -129,11 +128,6 @@ def wrap(func):
             termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old2)
 
 
-def ver(event):
-    "show version."
-    event.reply(f"{Cfg.name.upper()} {Cfg.version}")
-
-
 "runtime"
 
 
@@ -141,7 +135,6 @@ def main():
     "main code"
     Workdir.skel()
     Errors.enable(print)
-    #Client.add(ver)
     parse_cmd(Cfg, " ".join(sys.argv[1:]))
     result = None
     if 'a' in Cfg.opts:

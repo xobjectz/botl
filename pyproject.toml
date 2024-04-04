@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "botl"
 description = "bot library"
-version = "106"
+version = "107"
 authors = [
     {name = "Bart Thate",email = "bthate@dds.nl"},
 ]
