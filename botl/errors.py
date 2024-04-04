@@ -16,7 +16,7 @@ class Errors:
 
     errors = []
     filter = []
-    output = print
+    output = None
     shown  = []
 
     @staticmethod
