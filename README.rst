@@ -130,7 +130,7 @@ SYSTEMD
 
 ::
 
-    save the following it in /etc/systems/system/botl.service and
+    save the following it in /etc/systemd/system/botl.service and
     replace "<user>" with the user running pipx
 
     [Unit]
