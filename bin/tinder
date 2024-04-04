@@ -9,7 +9,6 @@
 
 import os
 import profile
-import random
 import shutil
 import sys
 import termios
