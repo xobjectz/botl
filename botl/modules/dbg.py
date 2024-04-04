@@ -19,4 +19,4 @@ def dbg(event):
     raise MyBug("yo!")
 
 
-Client.add(dbg)
+#Client.add(dbg)
