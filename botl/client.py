@@ -7,6 +7,7 @@
 
 
 from .broker  import Broker
+from .errors  import Errors
 from .event   import Event
 from .handler import Handler
 from .object  import Object
@@ -38,8 +39,11 @@ class Client(Handler):
         parse_cmd(evt)
         func = getattr(self.cmds, evt.cmd, None)
         if func:
-            func(evt)
-            self.show(evt)
+            try:
+                func(evt)
+                self.show(evt)
+            except Exception as ex:
+                Errors.add(ex)
         evt.ready()
 
     def raw(self, txt):

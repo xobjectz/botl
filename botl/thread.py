@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0718
+# pylint: disable=C,R,W0105,W0718
 
 
 "thread"
@@ -40,7 +40,12 @@ class Thread(threading.Thread):
     def run(self):
         "run this thread's payload."
         func, args = self.queue.get()
-        self._result = func(*args)
+        try:
+            self._result = func(*args)
+        except Exception as ex:
+            Errors.add(ex)
+            if args and "Event" in str(type(args[0])):
+                args[0].ready()
 
 
 def launch(func, *args, **kwargs):
@@ -65,6 +70,9 @@ def name(obj):
     if '__name__' in dir(obj):
         return f'{obj.__class__.__name__}.{obj.__name__}'
     return None
+
+
+"interface"
 
 
 def __dir__():

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 #
-#
+# pylint: disable=C,R,W0105
+
 
 "created clients"
 
@@ -14,6 +15,9 @@ import sys
 import termios
 import time
 import _thread
+
+
+sys.path.insert(0, os.getcwd())
 
 
 from botl.client  import Client

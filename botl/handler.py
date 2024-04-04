@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105
+# pylint: disable=C,R,W0105,W0718
 
 
 "handler"
@@ -30,7 +30,10 @@ class Handler:
         "call callback based on event type."
         func = getattr(self.cbs, evt.type, None)
         if func:
-            func(evt)
+            if self.threaded:
+                evt._thr = launch(func, evt)
+            else:
+                func(evt)
 
     def loop(self):
         "proces events until interrupted."
@@ -40,7 +43,7 @@ class Handler:
                 self.callback(evt)
             except (KeyboardInterrupt, EOFError):
                 _thread.interrupt_main()
-            except Exception as ex: # pylint: disable=W0718
+            except Exception as ex:
                 Errors.add(ex)
                 evt.ready()
 
