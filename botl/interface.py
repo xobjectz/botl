@@ -1,12 +1,9 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R.W0105
+# pylint: disable=C,R,W0105,W0614,W0401,W0622
 
 
 "interface"
-
-
-import sys
 
 
 from . import broker, client, default, errors, event, handler, object
