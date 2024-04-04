@@ -7,7 +7,6 @@
 
 
 from .broker  import Broker
-from .errors  import Errors
 from .event   import Event
 from .handler import Handler
 from .object  import Object
@@ -37,22 +36,18 @@ class Client(Handler):
     def command(self, evt):
         "check for and run a command."
         parse_cmd(evt)
-        func = getattr(Client.cmds, evt.cmd, None)
+        func = getattr(self.cmds, evt.cmd, None)
         if func:
-            try:
-                func(evt)
-            except BaseException as exc:
-                Errors.add(exc)
-        self.show(evt)
+            func(evt)
+            self.show(evt)
         evt.ready()
 
     def raw(self, txt):
         "raw output."
 
-    def say(self, channel, txt):
+    def say(self, _channel, txt):
         "say text in a channel."
-        if channel:
-            self.raw(txt)
+        self.raw(txt)
 
     def show(self, evt):
         "show results into a channel."

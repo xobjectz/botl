@@ -1,6 +1,5 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=W0212,C0413
 # ruff: noqa: E402
 
 
@@ -10,13 +9,11 @@
 import getpass
 import os
 import pwd
-import readline # pylint: disable=W0611
 import sys
 import termios
 import time
 
 
-from .broker  import Broker
 from .client  import Client, cmnd
 from .default import Default
 from .errors  import Errors,debug
@@ -27,28 +24,25 @@ from .utils   import spl
 from .workdir import Workdir
 
 
-Cfg         = Default()
-Cfg.mod     = "cmd,mod"
-Cfg.name    = "botl"
-Cfg.version = "105"
-Cfg.workdir      = os.path.expanduser(f"~/.{Cfg.name}")
-Cfg.pidfile = os.path.join(Cfg.wd, f"{Cfg.name}.pid")
-Workdir.workdir = Cfg.workdir
-
-
 from . import modules
 
 
+Cfg          = Default()
+Cfg.mod      = "cmd,mod"
+Cfg.name     = "botl"
+Cfg.version  = "105"
+Cfg.dir      = os.path.expanduser(f"~/.{Cfg.name}")
+Cfg.pidfile  = os.path.join(Cfg.wd, f"{Cfg.name}.pid")
+Workdir.workdir = Cfg.dir
+
+
 dte = time.ctime(time.time()).replace("  ", " ")
+ext = os._exit # pylint: disable=W0212
 
 
 class Console(Client):
 
     "Console"
-
-    def __init__(self):
-        Client.__init__(self)
-        Broker.add(self)
 
     def announce(self, txt):
         "blind announce"
@@ -56,7 +50,7 @@ class Console(Client):
     def callback(self, evt):
         "run and wait for callback to finish."
         Client.callback(self, evt)
-        evt.wait()
+        evt.wait(5.0)
 
     def poll(self):
         "reconstruct event from input."
@@ -66,7 +60,7 @@ class Console(Client):
         evt.type = "command"
         return evt
 
-    def say(self, channel, txt):
+    def say(self, _channel, txt):
         "say text in channel."
         txt = txt.encode('utf-8', 'replace').decode()
         print(txt)
@@ -76,11 +70,11 @@ def daemon(pidfile, verbose=False):
     "fork into the background."
     pid = os.fork()
     if pid != 0:
-        os._exit(0)
+        ext(0)
     os.setsid()
     pid2 = os.fork()
     if pid2 != 0:
-        os._exit(0)
+        ext(0)
     if not verbose:
         with open('/dev/null', 'r', encoding="utf-8") as sis:
             os.dup2(sis.fileno(), sys.stdin.fileno())
@@ -162,16 +156,14 @@ def main():
         init(modules, Cfg.mod)
         while 1:
             time.sleep(1.0)
-        return result
-    if "c" in Cfg.opts:
+    elif "c" in Cfg.opts:
         init(modules, Cfg.mod)
         csl = Console()
         csl.start()
         while 1:
             time.sleep(1.0)
-        return result
-    if Cfg.otxt:
-        return cmnd(Cfg.otxt, print)
+    elif Cfg.otxt:
+        cmnd(Cfg.otxt, print)
     return result
 
 

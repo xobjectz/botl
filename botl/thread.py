@@ -12,9 +12,6 @@ import time
 import types
 
 
-from .errors import Errors
-
-
 class Thread(threading.Thread):
 
     "Thread"
@@ -43,12 +40,7 @@ class Thread(threading.Thread):
     def run(self):
         "run this thread's payload."
         func, args = self.queue.get()
-        try:
-            self._result = func(*args)
-        except Exception as exc:
-            Errors.add(exc)
-            if args and "ready" in dir(args[0]):
-                args[0].ready()
+        self._result = func(*args)
 
 
 def launch(func, *args, **kwargs):

@@ -11,6 +11,7 @@ import threading
 import _thread
 
 
+from .errors  import Errors
 from .object  import Object
 from .thread  import launch
 
@@ -28,10 +29,8 @@ class Handler:
     def callback(self, evt):
         "call callback based on event type."
         func = getattr(self.cbs, evt.type, None)
-        if not func:
-            evt.ready()
-            return
-        evt.thr = launch(func, evt)
+        if func:
+            func(evt)
 
     def loop(self):
         "proces events until interrupted."
@@ -39,6 +38,9 @@ class Handler:
             try:
                 evt = self.poll()
                 self.callback(evt)
+            except Exception as ex: # pylint: disable=W0718
+                Errors.add(ex)
+                evt.ready()
             except (KeyboardInterrupt, EOFError):
                 _thread.interrupt_main()
 
