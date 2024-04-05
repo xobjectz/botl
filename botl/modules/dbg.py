@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0611
+# pylint: disable=C,R,W0105,W0611
 
 
 "debug"
@@ -17,6 +17,9 @@ class MyBug(Exception):
 def dbg(event):
     "raise exception"
     raise MyBug("yo!")
+
+
+"register"
 
 
 #Client.add(dbg)

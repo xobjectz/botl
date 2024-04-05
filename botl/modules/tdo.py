@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R
+# pylint: disable=C,R,W0105
 
 
 "todo list"
@@ -31,9 +31,6 @@ class Todo(Object):
     txt: str = ''
 
 
-Persist.add(Todo)
-
-
 def dne(event):
     "mark todo as done."
     if not event.args:
@@ -49,9 +46,6 @@ def dne(event):
         break
     if not nmr:
         event.reply("nothing todo")
-
-
-Client.add(dne)
 
 
 def tdo(event):
@@ -71,4 +65,9 @@ def tdo(event):
     event.reply('ok')
 
 
+"register"
+
+
+Client.add(dne)
 Client.add(tdo)
+Persist.add(Todo)

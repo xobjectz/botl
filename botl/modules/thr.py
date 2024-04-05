@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R
+# pylint: disable=C,R,W0105
 
 
 "show running threads"
@@ -41,6 +41,9 @@ def thr(event):
         event.reply(' '.join(res))
     else:
         event.reply('no threads')
+
+
+"initialize"
 
 
 Client.add(thr)

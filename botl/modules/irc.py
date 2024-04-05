@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0718
+# pylint: disable=C,R,W0105,W0718
 # ruff: noqa: F841
 
 
@@ -539,6 +539,9 @@ class IRC(Client, Output):
         self.events.ready.wait()
 
 
+"callbacks"
+
+
 def cb_auth(evt):
     "auth callback."
     bot = get(evt.orig)
@@ -633,6 +636,9 @@ def cb_quit(evt):
         bot.stop()
 
 
+"commands"
+
+
 def cfg(event):
     "configure command."
     config = Config()
@@ -649,9 +655,6 @@ def cfg(event):
         edit(config, event.sets)
         sync(config, path)
         event.reply('ok')
-
-
-Client.add(cfg)
 
 
 def mre(event):
@@ -674,9 +677,6 @@ def mre(event):
     event.reply(f'{size} more in cache')
 
 
-Client.add(mre)
-
-
 def pwd(event):
     "create a base64 password."
     if len(event.args) != 2:
@@ -691,4 +691,9 @@ def pwd(event):
     event.reply(dcd)
 
 
+"register"
+
+
+Client.add(cfg)
+Client.add(mre)
 Client.add(pwd)

@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0611
+# pylint: disable=C,R,W0105,W0611
 
 
 "find"
@@ -32,6 +32,9 @@ def fnd(event):
         nmr += 1
     if not nmr:
         event.reply("no result")
+
+
+"register"
 
 
 #Client.add(fnd)

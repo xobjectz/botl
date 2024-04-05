@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R
+# pylint: disable=C,R,W0105
 
 
 "rest"
@@ -19,23 +19,6 @@ from ..errors  import Errors, debug
 from ..object  import Object
 from ..persist import Persist, Workdir
 from ..thread  import launch
-
-
-def init():
-    "start object server."
-    result = None
-    try:
-        result = REST((Config.hostname, int(Config.port)), RESTHandler)
-    except OSError:
-        pass
-    if result:
-        launch(result.start)
-    return result
-
-
-def html(txt):
-    "html template."
-    return f"<!doctype html><html>{txt}</html>"
 
 
 class Config(Default):
@@ -136,3 +119,23 @@ class RESTHandler(BaseHTTPRequestHandler):
     def log(self, code):
         "log access."
         debug(f"{self.address_string()} code {code} path {self.path}")
+
+
+def html(txt):
+    "html template."
+    return f"<!doctype html><html>{txt}</html>"
+
+
+"runtime"
+
+
+def init():
+    "start object server."
+    result = None
+    try:
+        result = REST((Config.hostname, int(Config.port)), RESTHandler)
+    except OSError:
+        pass
+    if result:
+        launch(result.start)
+    return result

@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R
+# pylint: disable=C,R,W0105
 
 
 "genocide model of the netherlands"
@@ -388,7 +388,13 @@ def now(event):
         event.reply("not needed")
 
 
+"register"
+
+
 Client.add(now)
+
+
+"runtime"
 
 
 def boot():

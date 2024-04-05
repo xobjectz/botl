@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R
+# pylint: disable=C,R,W0105
 
 
 "mailbox"
@@ -48,9 +48,6 @@ class Email(Object):
         pass
 
 
-Persist.add(Email)
-
-
 def cor(event):
     "search correspondence."
     if not event.args:
@@ -69,9 +66,6 @@ def cor(event):
         event.reply(f"{nrs} {form} {lapsed}")
 
 
-Client.add(cor)
-
-
 def eml(event):
     "search email from recipient."
     if not event.args:
@@ -84,9 +78,6 @@ def eml(event):
             form = fmt(obj, "From,Subject")
             lapsed = laps(time.time() - fntime(fnm))
             event.reply(f"{nrs} {form} {lapsed}")
-
-
-Client.add(eml)
 
 
 def mbx(event):
@@ -120,4 +111,10 @@ def mbx(event):
         event.reply(f"ok {nrs}")
 
 
+"register"
+
+
+Client.add(cor)
+Client.add(eml)
 Client.add(mbx)
+Persist.add(Email)

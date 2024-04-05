@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R
+# pylint: disable=C,R,W0105
 
 
 "rich site syndicate"
@@ -35,10 +35,18 @@ def init():
     return fetcher
 
 
+fetchlock = _thread.allocate_lock()
+
+
 DEBUG = False
 
 
-fetchlock = _thread.allocate_lock()
+TEMPLATE = """<opml version="1.0">
+    <head>
+        <title>rssbot opml</title>
+    </head>
+    <body>
+        <outline title="rssbot opml" text="24/7 feed fetcher">"""
 
 
 class Feed(Default):
@@ -56,9 +64,6 @@ class Rss(Default):
         self.rss          = ''
 
 
-Persist.add(Rss)
-
-
 class Seen(Default):
 
     "Seen"
@@ -66,9 +71,6 @@ class Seen(Default):
     def __init__(self):
         Default.__init__(self)
         self.urls = []
-
-
-Persist.add(Seen)
 
 
 class Fetcher(Object):
@@ -320,6 +322,9 @@ def useragent(txt):
     return 'Mozilla/5.0 (X11; Linux x86_64) ' + txt
 
 
+"commands"
+
+
 def dpl(event):
     "set display items."
     if len(event.args) < 2:
@@ -331,9 +336,6 @@ def dpl(event):
             update(feed, setter)
             sync(feed)
     event.reply('ok')
-
-
-Client.add(dpl)
 
 
 def exp(event):
@@ -350,9 +352,6 @@ def exp(event):
     event.reply("</opml>")
 
 
-Client.add(exp)
-
-
 def nme(event):
     "set name of feed."
     if len(event.args) != 2:
@@ -364,9 +363,6 @@ def nme(event):
             feed.name = event.args[1]
             sync(feed)
     event.reply('ok')
-
-
-Client.add(nme)
 
 
 def rem(event):
@@ -382,9 +378,6 @@ def rem(event):
     event.reply('ok')
 
 
-Client.add(rem)
-
-
 def res(event):
     "restore a feed."
     if len(event.args) != 1:
@@ -396,9 +389,6 @@ def res(event):
             feed.__deleted__ = False
             sync(feed, fnm)
     event.reply('ok')
-
-
-Client.add(res)
 
 
 def rss(event):
@@ -427,12 +417,14 @@ def rss(event):
     event.reply('ok')
 
 
+"register"
+
+
+Client.add(dpl)
+Client.add(exp)
+Client.add(nme)
+Client.add(rem)
+Client.add(res)
 Client.add(rss)
-
-
-TEMPLATE = """<opml version="1.0">
-    <head>
-        <title>rssbot opml</title>
-    </head>
-    <body>
-        <outline title="rssbot opml" text="24/7 feed fetcher">"""
+Persist.add(Rss)
+Persist.add(Seen)

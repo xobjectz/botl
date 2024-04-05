@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R
+# pylint: disable=C,R,W0105
 
 
 "udp to irc relay"
@@ -96,6 +96,9 @@ def toudp(host, port, txt):
     sock.sendto(bytes(txt.strip(), "utf-8"), (host, port))
 
 
+"commands"
+
+
 def udp(event):
     "send udp command."
     if event.rest:
@@ -131,6 +134,9 @@ def udp(event):
             toudp(Cfg.host, Cfg.port, txt)
         if stop:
             break
+
+
+"register"
 
 
 Client.add(udp)

@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-#
+# pylint: disable=C,R,W0105
 
 
 "status of bots"
@@ -23,6 +23,9 @@ def err(event):
         txt = Errors.format(exc)
         for line in txt.split():
             event.reply(line)
+
+
+"register"
 
 
 Client.add(err)

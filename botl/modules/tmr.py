@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R
+# pylint: disable=C,R,W0105
 
 
 "timer"
@@ -19,21 +19,6 @@ from ..persist import Persist, find, sync
 from ..thread  import launch
 from ..timer   import Timer
 from ..utils   import laps
-
-
-def init():
-    "start timers."
-    for _fn, obj in find("timer"):
-        if "time" not in obj:
-            continue
-        diff = float(obj.time) - ttime.time()
-        if diff > 0:
-            bot = Broker.first()
-            evt = Event()
-            update(evt, obj)
-            evt.orig = object.__repr__(bot)
-            timer = Timer(diff, evt.show)
-            launch(timer.start)
 
 
 MONTHS = [
@@ -64,9 +49,6 @@ FORMATS = [
 class NoDate(Exception):
 
     "NoDate"
-
-
-Persist.add(Timer)
 
 
 def extract_date(daystr):
@@ -187,6 +169,9 @@ def today():
     return str(datetime.datetime.today()).split()[0]
 
 
+"commands"
+
+
 def tmr(event):
     "add a timer."
     result = ""
@@ -234,4 +219,26 @@ def tmr(event):
     return result
 
 
+"runtime"
+
+
+def init():
+    "start timers."
+    for _fn, obj in find("timer"):
+        if "time" not in obj:
+            continue
+        diff = float(obj.time) - ttime.time()
+        if diff > 0:
+            bot = Broker.first()
+            evt = Event()
+            update(evt, obj)
+            evt.orig = object.__repr__(bot)
+            timer = Timer(diff, evt.show)
+            launch(timer.start)
+
+
+"register"
+
+
 Client.add(tmr)
+Persist.add(Timer)

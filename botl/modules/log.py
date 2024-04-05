@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R
+# pylint: disable=C,R,W0105
 
 
 "log text"
@@ -30,9 +30,6 @@ class Log(Object):
         pass
 
 
-Persist.add(Log)
-
-
 def log(event):
     "log text."
     if not event.rest:
@@ -50,4 +47,7 @@ def log(event):
     event.reply('ok')
 
 
+"register"
+
 Client.add(log)
+Persist.add(Log)
