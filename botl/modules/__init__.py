@@ -8,7 +8,7 @@
 
 
 from . import cmd, err, flt, fnd, log, mbx, mdl, mod, req, rst, tdo, thr, tmr
-from . import irc, rss, udp, wsd
+from . import man, irc, rss, udp, wsd
 
 
 
@@ -18,6 +18,7 @@ def __dir__():
        'flt',
        'fnd',
        'log',
+       'man',
        'mbx',
        'mdl',
        'mod',

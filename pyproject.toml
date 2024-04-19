@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "botl"
 description = "bot library"
-version = "107"
+version = "110"
 authors = [
     {name = "Bart Thate",email = "bthate@dds.nl"},
 ]
@@ -22,10 +22,6 @@ classifiers = [
     'Topic :: Utilities'
 ]
 
-[project.scripts]
-"botl" = "botl.__main__:wrapped"
-
-
 [project.urls]
 "home" = "https://pypi.org/project/botl"
 "bugs" = "https://github.com/xobjectz/botl/issues"
@@ -33,6 +29,11 @@ classifiers = [
 
 
 [tool.setuptools]
+script-files = [
+    "bin/botl",
+    "bin/botld",
+    "bin/botlbot"
+]
 packages = [
     "botl",
     "botl.modules"

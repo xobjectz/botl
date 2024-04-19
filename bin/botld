@@ -27,8 +27,8 @@ from botl.workdir import Workdir, skel
 Cfg             = Default()
 Cfg.mod         = "cmd,irc,mod,rss"
 Cfg.opts        = ""
-Cfg.name        = "rssbot"
-Cfg.version     = "552"
+Cfg.name        = "botld"
+Cfg.version     = "107
 Cfg.wd          = os.path.expanduser(f"~/.{Cfg.name}")
 Cfg.pidfile     = os.path.join(Cfg.wd, f"{Cfg.name}.pid")
 Workdir.workdir = Cfg.wd
