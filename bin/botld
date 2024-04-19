@@ -16,12 +16,12 @@ import sys
 import time
 
 
-from rssbot.client  import spl
-from rssbot.command import Command
-from rssbot.default import Default
-from rssbot.errors  import enable, errors
-from rssbot.object  import cdir
-from rssbot.workdir import Workdir, skel
+from botl.client  import spl
+from botl.command import Command
+from botl.default import Default
+from botl.errors  import enable, errors
+from botl.object  import cdir
+from botl.workdir import Workdir, skel
 
 
 Cfg             = Default()
@@ -34,7 +34,7 @@ Cfg.pidfile     = os.path.join(Cfg.wd, f"{Cfg.name}.pid")
 Workdir.workdir = Cfg.wd
 
 
-from rssbot import modules
+from botl import modules
 
 
 def daemon(pidfile, verbose=False):
