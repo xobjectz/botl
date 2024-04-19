@@ -15,15 +15,3 @@ class Default(Object):
 
     def __getattr__(self, key):
         return self.__dict__.get(key, "")
-
-
-"interface"
-
-
-def __dir__():
-    return (
-        'Default',
-    )
-
-
-__all__ = __dir__()

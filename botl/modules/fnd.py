@@ -1,28 +1,29 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105,W0611
+# pylint: disable=C,R,W0611,E0402
 
 
-"find"
+"locate"
 
 
-from ..client  import Client
-from ..object  import fmt
-from ..persist import Persist, Workdir, find
+from botl.command import Command
+from botl.find    import find
+from botl.object  import fmt
+from botl.persist import long
+from botl.workdir import liststore, skel
 
 
 def fnd(event):
-    "find objects."
-    Workdir.skel()
+    skel()
     if not event.rest:
-        res = sorted([x.split('.')[-1].lower() for x in Workdir.types()])
+        res = sorted([x.split('.')[-1].lower() for x in liststore()])
         if res:
             event.reply(",".join(res))
         return
     otype = event.args[0]
-    clz = Persist.long(otype)
+    clz = long(otype)
     if "." not in clz:
-        for fnm in Workdir.types():
+        for fnm in liststore():
             claz = fnm.split(".")[-1]
             if otype == claz.lower():
                 clz = fnm
@@ -34,7 +35,4 @@ def fnd(event):
         event.reply("no result")
 
 
-"register"
-
-
-#Client.add(fnd)
+#Command.add(fnd)

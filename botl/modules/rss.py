@@ -18,14 +18,16 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from ..broker   import Broker
-from ..client   import Client
+from ..client   import laps, spl
+from ..command  import Command
 from ..default  import Default
-from ..object   import Object, fmt, update
-from ..persist  import Persist, find, fntime, last, sync
+from ..find     import find, fntime, last
+from ..object   import Object, fmt, update, values
+from ..persist  import whitelist
 from ..repeater import Repeater
+from ..runtime  import broker
 from ..thread   import launch
-from ..utils    import laps, spl
+from ..workdir  import sync
 
 
 def init():
@@ -35,10 +37,10 @@ def init():
     return fetcher
 
 
-fetchlock = _thread.allocate_lock()
-
-
 DEBUG = False
+
+
+fetchlock = _thread.allocate_lock()
 
 
 TEMPLATE = """<opml version="1.0">
@@ -133,7 +135,7 @@ class Fetcher(Object):
             txt = f'[{feedname}] '
         for obj in result:
             txt2 = txt + self.display(obj)
-            for bot in Broker.all():
+            for bot in values(broker.objs):
                 if "announce" in dir(bot):
                     bot.announce(txt2.rstrip())
         return counter
@@ -420,11 +422,11 @@ def rss(event):
 "register"
 
 
-Client.add(dpl)
-Client.add(exp)
-Client.add(nme)
-Client.add(rem)
-Client.add(res)
-Client.add(rss)
-Persist.add(Rss)
-Persist.add(Seen)
+Command.add(dpl)
+Command.add(exp)
+Command.add(nme)
+Command.add(rem)
+Command.add(res)
+Command.add(rss)
+whitelist(Rss)
+whitelist(Seen)

@@ -12,7 +12,7 @@ import time
 import types
 
 
-from .errors import Errors
+from .errors import later
 
 
 class Thread(threading.Thread):
@@ -46,7 +46,7 @@ class Thread(threading.Thread):
         try:
             self._result = func(*args)
         except Exception as ex:
-            Errors.add(ex)
+            later(ex)
             if args and "Event" in str(type(args[0])):
                 args[0].ready()
 
@@ -73,17 +73,3 @@ def name(obj):
     if '__name__' in dir(obj):
         return f'{obj.__class__.__name__}.{obj.__name__}'
     return None
-
-
-"interface"
-
-
-def __dir__():
-    return (
-        'Thread',
-        'launch',
-        'name'
-    )
-
-
-__all__ = __dir__()

@@ -18,11 +18,11 @@ class Event(Default):
 
     def __init__(self):
         Default.__init__(self)
+        self._thr    = None
         self._ready  = threading.Event()
         self.done    = False
         self.orig    = None
         self.result  = []
-        self.thr    = None
         self.txt     = ""
         self.type    = "event"
 
@@ -34,21 +34,9 @@ class Event(Default):
         "add text to the result"
         self.result.append(txt)
 
-    def wait(self, sec=None):
+    def wait(self):
         "wait for event to be ready."
-        if self.thr:
-            self.thr.join()
-        self._ready.wait(sec)
+        if self._thr:
+            self._thr.join()
+        self._ready.wait()
         return self.result
-
-
-"interface"
-
-
-def __dir__():
-    return (
-        'Event',
-    )
-
-
-__all__ = __dir__()

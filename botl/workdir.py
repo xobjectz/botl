@@ -6,10 +6,11 @@
 "working directory"
 
 
+import datetime
 import os
 
 
-from .object import Object, cdir
+from .object import Object, cdir, fqn, read, write
 
 
 class Workdir(Object):
@@ -18,31 +19,46 @@ class Workdir(Object):
 
     workdir = ""
 
-    @staticmethod
-    def skel():
-        "create directory,"
-        cdir(os.path.join(Workdir.workdir, "store", ""))
 
-    @staticmethod
-    def store(pth=""):
-        "return objects directory."
-        return os.path.join(Workdir.workdir, "store", pth)
-
-    @staticmethod
-    def strip(pth, nmr=3):
-        "reduce to path with directory."
-        return os.sep.join(pth.split(os.sep)[-nmr:])
-
-    @staticmethod
-    def types():
-        "return types stored."
-        return os.listdir(Workdir.store())
+def fetch(obj, pth):
+    "read object from disk."
+    pth2 = store(pth)
+    read(obj, pth2)
+    return strip(pth)
 
 
-def __dir__():
-    return (
-        'Workdir',
-    )
+def ident(obj):
+    "return an id for an object."
+    return os.path.join(
+                        fqn(obj),
+                        os.path.join(*str(datetime.datetime.now()).split())
+                       )
 
 
-__all__ = __dir__()
+def liststore():
+    "return types stored."
+    return os.listdir(store())
+
+
+def skel():
+    "create directory,"
+    cdir(os.path.join(Workdir.workdir, "store", ""))
+
+
+def store(pth=""):
+    "return objects directory."
+    return os.path.join(Workdir.workdir, "store", pth)
+
+
+def strip(pth, nmr=3):
+    "reduce to path with directory."
+    return os.sep.join(pth.split(os.sep)[-nmr:])
+
+
+def sync(obj, pth=None):
+    "sync object to disk."
+    if pth is None:
+        pth = ident(obj)
+    pth2 = store(pth)
+    write(obj, pth2)
+    return pth

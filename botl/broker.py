@@ -1,12 +1,37 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105
+# pylint: disable=C,R,W0105,W0212,W0613,W0718,E0402,E1102
 
 
-"broker"
+"""broker
+
+This Broker class stores objects on their repr name and can thus be
+retrieved by a client presenting a repr of an object.
+
+Client can carry a string (the repr) around instead of a memory
+reference to the object.
+
+Adding an object takes the repr and stores it in a dict, the rest are
+methods to retrieve an object from the broker.
+
+Broker is operating at an class level where the class level attributes
+are manipulated instead of an object inherited from that class.
+
+::
+
+    >>> from objx import Object
+    >>> from objr import Broker
+    >>> b = Broker()
+    >>> o = Object()
+    >>> b.add(o)
+    >>> oo = b.get(repr(o))
+    >>> o is oo
+    True
+
+"""
 
 
-from .object import Object, keys, values
+from .object import Object, keys
 
 
 rpr = object.__repr__
@@ -16,42 +41,22 @@ class Broker:
 
     "Broker"
 
-    objs = Object()
+    def __init__(self):
+        self.objs = Object()
 
-    @staticmethod
-    def add(obj):
+    def add(self, obj):
         "add an object to the broker."
-        setattr(Broker.objs, rpr(obj), obj)
+        setattr(self.objs, rpr(obj), obj)
 
-    @staticmethod
-    def all():
-        "return all objects."
-        return values(Broker.objs)
-
-    @staticmethod
-    def first():
+    def first(self):
         "return first object."
-        for key in keys(Broker.objs):
-            return getattr(Broker.objs, key)
+        for key in keys(self.objs):
+            return getattr(self.objs, key)
 
-    @staticmethod
-    def get(orig):
+    def get(self, orig):
         "return object by origin (repr)"
-        return getattr(Broker.objs, orig, None)
+        return getattr(self.objs, orig, None)
 
-    @staticmethod
-    def remove(obj):
+    def remove(self, obj):
         "remove object from broker"
-        delattr(Broker.objs, rpr(obj))
-
-
-"interface"
-
-
-def __dir__():
-    return (
-        'Broker',
-    )
-
-
-__all__ = __dir__()
+        delattr(self.objs, rpr(obj))

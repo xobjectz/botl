@@ -3,7 +3,7 @@
 # pylint: disable=C,R,W0105
 
 
-"object"
+"objects"
 
 
 import json

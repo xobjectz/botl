@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105
+# pylint: disable=C,R,W0613,E0402,W0105
 
 
 "genocide model of the netherlands"
@@ -10,24 +10,23 @@ import datetime
 import time
 
 
-from ..broker   import Broker
-from ..client   import Client
+from ..client   import laps
+from ..command  import Command
 from ..event    import Event
-from ..object   import Object, construct, keys
+from ..object   import Object, construct, keys, values
 from ..repeater import Repeater
+from ..runtime  import broker
 from ..thread   import launch
-from ..utils    import laps
 
 
-def __dir__():
-    return (
-            'init',
-            'now'
-           )
+DAY = 24*60*60
+YEAR = 365*DAY
+SOURCE = "https://github.com/bthate/genocide"
+STARTDATE = "2020-01-01 00:00:00"
+STARTTIME = time.mktime(time.strptime(STARTDATE, "%Y-%m-%d %H:%M:%S"))
 
 
 def init():
-    "start genocide model."
     for key in keys(oorzaken):
         val = getattr(oorzaken, key, None)
         if val and int(val) > 10000:
@@ -38,13 +37,7 @@ def init():
             repeater = Repeater(sec, cbstats, evt, thrname=aliases.get(key))
             repeater.start()
     launch(daily, name="daily")
-
-
-DAY = 24*60*60
-YEAR = 365*DAY
-SOURCE = "https://github.com/bthate/genocide"
-STARTDATE = "2020-01-01 00:00:00"
-STARTTIME = time.mktime(time.strptime(STARTDATE, "%Y-%m-%d %H:%M:%S"))
+    
 
 
 oor = """"Totaal onderliggende doodsoorzaken (aantal)";
@@ -284,24 +277,18 @@ oorzaken = Object()
 
 
 def getalias(txt):
-    "teturn matching alias."
-    result = None
     for key, value in aliases.items():
         if txt.lower() in key.lower():
-            result = value
-            break
-    return result
+            return value
 
 
 def getday():
-    "return timestamp of current day."
     day = datetime.datetime.now()
     day = day.replace(hour=0, minute=0, second=0, microsecond=0)
     return day.timestamp()
 
 
 def getnr(name):
-    "return number of deaths by name."
     for k in keys(oorzaken):
         if name.lower() in k.lower():
             return int(getattr(oorzaken, k))
@@ -309,7 +296,6 @@ def getnr(name):
 
 
 def seconds(nrs):
-    "calculate sedconds"
     if not nrs:
         return nrs
     return 60*60*24*365 / float(nrs)
@@ -317,7 +303,6 @@ def seconds(nrs):
 
 
 def iswanted(k, line):
-    "see whether an item is wanted."
     for word in line:
         if word in k:
             return True
@@ -325,23 +310,20 @@ def iswanted(k, line):
 
 
 def daily():
-    "run a callback daily."
     while 1:
         time.sleep(24*60*60)
-        cbnow(Event())
+        evt = Event()
+        cbnow(evt)
 
 
 def hourly():
-    "run a callback hourly."
     while 1:
         time.sleep(60*60)
-        cbnow(Event())
+        evt = Event()
+        cbnow(evt)
 
 
 def cbnow(evt):
-    "check status now callback."
-    if not evt:
-        evt = Event()
     delta = time.time() - STARTTIME
     txt = laps(delta) + " "
     for name in sorted(keys(oorzaken), key=lambda x: seconds(getnr(x))):
@@ -349,56 +331,72 @@ def cbnow(evt):
         if needed > 60*60:
             continue
         nrtimes = int(delta/needed)
-        txt += f"{getalias(name)}: {nrtimes}"
+        txt += "%s: %s " % (getalias(name), nrtimes)
     txt += " http://genocide.rtfd.io"
-    for bot in Broker.all():
+    for bot in values(broker.objs):
         if "announce" in dir(bot):
             bot.announce(txt)
 
 
 def cbstats(evt):
-    "callback showing stats."
     name = evt.rest or "Psych"
     needed = seconds(getnr(name))
     if needed:
         delta = time.time() - STARTTIME
-        nrt = int(delta/needed)
-        nry = int(YEAR/needed)
-        nrd = int(DAY/needed)
+        nrtimes = int(delta/needed)
+        nryear = int(YEAR/needed)
+        nrday = int(DAY/needed)
         delta2 = time.time() - getday()
-        this = int(delta2/needed)
-        txt = f"#{nrt} died from {getalias(name)} ({this}/{nrd}) every {laps(needed)} ({nry}/year)"
-        for bot in Broker.all():
+        thisday = int(delta2/needed)
+        txt = "patient #%s died from %s (%s/%s) every %s (%s/year)" % (
+                                                               nrtimes,
+                                                               getalias(name),
+                                                               thisday,
+                                                               nrday,
+                                                               laps(needed),
+                                                               nryear,
+                                                              )
+        for bot in values(broker.objs):
             bot.announce(txt)
 
 
 def now(event):
-    "showing number of psychiatric patients victims."
     name = event.rest or "Psych"
     needed = seconds(getnr(name))
     if needed:
         delta = time.time() - STARTTIME
         txt = laps(delta) + " "
-        nrt = int(delta/needed)
-        nrd = int(DAY/needed)
-        this = int(DAY % needed)
-        txt = f"#{nrt} died from {getalias(name)} ({this}/{nrd}) every {laps(needed)}"
+        nrtimes = int(delta/needed)
+        nryear = int(YEAR/needed)
+        nrday = int(DAY/needed)
+        thisday = int(DAY % needed)
+        txt += "patient #%s died from %s (%s/%s/%s) every %s" % (
+                                                                 nrtimes,
+                                                                 getalias(name),
+                                                                 thisday,
+                                                                 nrday,
+                                                                 nryear,
+                                                                 laps(needed)
+                                                                )
         event.reply(txt)
     else:
         event.reply("not needed")
 
 
-"register"
+Command.add(now)
 
 
-Client.add(now)
+"interface"
 
 
-"runtime"
+def __dir__():
+    return (
+            'init',
+            'now'
+           ) 
 
 
 def boot():
-    "format model data."
     _nr = -1
     for key in keys(oorzaak):
         _nr += 1

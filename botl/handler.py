@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105,W0212,W0718
+# pylint: disable=C,R,W0105,W0212
 
 
 "handler"
@@ -11,9 +11,8 @@ import threading
 import _thread
 
 
-from .errors  import Errors
-from .object  import Object
-from .thread  import launch
+from .object import Object
+from .thread import launch
 
 
 class Handler:
@@ -21,7 +20,7 @@ class Handler:
     "Handler"
 
     def __init__(self):
-        self.cbs = Object()
+        self.cbs      = Object()
         self.queue    = queue.Queue()
         self.stopped  = threading.Event()
         self.threaded = True
@@ -29,11 +28,10 @@ class Handler:
     def callback(self, evt):
         "call callback based on event type."
         func = getattr(self.cbs, evt.type, None)
-        if func:
-            if self.threaded:
-                evt._thr = launch(func, evt)
-            else:
-                func(evt)
+        if not func:
+            evt.ready()
+            return
+        evt._thr = launch(func, self, evt)
 
     def loop(self):
         "proces events until interrupted."
@@ -43,9 +41,6 @@ class Handler:
                 self.callback(evt)
             except (KeyboardInterrupt, EOFError):
                 _thread.interrupt_main()
-            except Exception as ex:
-                Errors.add(ex)
-                evt.ready()
 
     def poll(self):
         "function to return event."
@@ -66,15 +61,3 @@ class Handler:
     def stop(self):
         "stop the event loop."
         self.stopped.set()
-
-
-"interface"
-
-
-def __dir__():
-    return (
-        'Handler',
-    )
-
-
-__all__ = __dir__()

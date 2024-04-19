@@ -1,25 +1,23 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105
+# pylint: disable=C,R
 
 
 "fleet"
 
 
-from ..client  import Client
-from ..broker  import Broker
+from ..command import Command
+from ..object  import values
+from ..runtime import broker
 from ..thread  import name
 
 
 def flt(event):
-    "show bots in fleet."
+    bots = values(broker.objs)
     try:
-        event.reply(Broker.all()[int(event.args[0])])
+        event.reply(bots[int(event.args[0])])
     except (IndexError, ValueError):
-        event.reply(",".join([name(x).split(".")[-1] for x in Broker.all()]))
+        event.reply(",".join([name(x).split(".")[-1] for x in bots]))
 
 
-"register"
-
-
-Client.add(flt)
+Command.add(flt)

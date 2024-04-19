@@ -15,7 +15,7 @@ from .thread import launch
 
 class Timer:
 
-    "Timer"
+    "run a function at a specific time."
 
     def __init__(self, sleep, func, *args, thrname=None):
         self.args  = args
@@ -47,15 +47,3 @@ class Timer:
         "stop timer."
         if self.timer:
             self.timer.cancel()
-
-
-"interface"
-
-
-def __dir__():
-    return (
-        'Timer',
-    )
-
-
-__all__ = __dir__()

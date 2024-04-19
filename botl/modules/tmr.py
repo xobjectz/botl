@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105
+# pylint: disable=C,R,W0612,W0105,W0702,E0402
 
 
 "timer"
@@ -11,14 +11,30 @@ import re
 import time as ttime
 
 
-from ..broker  import Broker
-from ..client  import Client
+from ..client  import laps
+from ..command import Command
 from ..event   import Event
-from ..object  import update
-from ..persist import Persist, find, sync
-from ..thread  import launch
+from ..find    import find
+from ..runtime import broker
 from ..timer   import Timer
-from ..utils   import laps
+from ..thread  import launch
+from ..persist import whitelist
+from ..object  import update
+from ..workdir import sync
+
+
+def init():
+    for fnm, obj in find("timer"):
+        if "time" not in obj:
+            continue
+        diff = float(obj.time) - ttime.time()
+        if diff > 0:
+            bot = broker.first()
+            evt = Event()
+            update(evt, obj)
+            evt.orig = object.__repr__(bot)
+            timer = Timer(diff, evt.show)
+            launch(timer.start)
 
 
 MONTHS = [
@@ -48,23 +64,23 @@ FORMATS = [
 
 class NoDate(Exception):
 
-    "NoDate"
+    pass
+
+
+whitelist(Timer)
 
 
 def extract_date(daystr):
-    "extract date from string."
-    res = None
     for fmt in FORMATS:
         try:
             res = ttime.mktime(ttime.strptime(daystr, fmt))
-            break
         except ValueError:
             res = None
-    return res
+        if res:
+            return res
 
 
 def get_day(daystr):
-    "return day from string."
     day = None
     month = None
     yea = None
@@ -84,13 +100,12 @@ def get_day(daystr):
         day = int(day)
         month = int(month)
         yea = int(yea)
-        date = f"{day} {MONTHS[month]} {yea}"
+        date = "%s %s %s" % (day, MONTHS[month], yea)
         return ttime.mktime(ttime.strptime(date, r"%d %b %Y"))
     raise NoDate(daystr)
 
 
 def get_hour(daystr):
-    "return hour from string."
     try:
         hmsre = re.search(r'(\d+):(\d+):(\d+)', str(daystr))
         hours = 60 * 60 * (int(hmsre.group(1)))
@@ -112,7 +127,6 @@ def get_hour(daystr):
 
 
 def get_time(txt):
-    "parse full time string."
     try:
         target = get_day(txt)
     except NoDate:
@@ -124,7 +138,6 @@ def get_time(txt):
 
 
 def parse_time(txt):
-    "parse time from string."
     seconds = 0
     target = 0
     txt = str(txt)
@@ -147,25 +160,22 @@ def parse_time(txt):
 
 
 def to_day(daystr):
-    "parse day from string."
     previous = ""
     line = ""
     daystr = str(daystr)
-    res = None
     for word in daystr.split():
         line = previous + " " + word
         previous = word
         try:
             res = extract_date(line.strip())
-            break
         except ValueError:
             res = None
+        if res:
+            return res
         line = ""
-    return res
 
 
 def today():
-    "return date."
     return str(datetime.datetime.today()).split()[0]
 
 
@@ -173,16 +183,18 @@ def today():
 
 
 def tmr(event):
-    "add a timer."
-    result = ""
     if not event.rest:
         nmr = 0
-        for _fn, obj in find('timer'):
+        for fnm, obj in find('timer'):
+            if "time" not in obj:
+                continue
             lap = float(obj.time) - ttime.time()
             if lap > 0:
                 event.reply(f'{nmr} {obj.txt} {laps(lap)}')
                 nmr += 1
-        return result
+        if not nmr:
+            event.reply("no timers")
+        return
     seconds = 0
     line = ""
     for word in event.args:
@@ -190,8 +202,8 @@ def tmr(event):
             try:
                 seconds = int(word[1:])
             except (ValueError, IndexError):
-                event.reply(f"{seconds} is not an integer")
-                return result
+                event.reply("%s is not an integer" % seconds)
+                return
         else:
             line += word + " "
     if seconds:
@@ -206,7 +218,7 @@ def tmr(event):
             target += hour
     if not target or ttime.time() > target:
         event.reply("already passed given time.")
-        return result
+        return
     event.time = target
     diff = target - ttime.time()
     event.reply("ok " +  laps(diff))
@@ -216,29 +228,6 @@ def tmr(event):
     update(timer, event)
     sync(timer)
     launch(timer.start)
-    return result
 
 
-"runtime"
-
-
-def init():
-    "start timers."
-    for _fn, obj in find("timer"):
-        if "time" not in obj:
-            continue
-        diff = float(obj.time) - ttime.time()
-        if diff > 0:
-            bot = Broker.first()
-            evt = Event()
-            update(evt, obj)
-            evt.orig = object.__repr__(bot)
-            timer = Timer(diff, evt.show)
-            launch(timer.start)
-
-
-"register"
-
-
-Client.add(tmr)
-Persist.add(Timer)
+Command.add(tmr)
