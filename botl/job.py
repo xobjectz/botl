@@ -15,9 +15,7 @@ class Job(Default):
 
     def __init__(self):
         Default.__init__(self)
-        self.orig    = None
         self.result  = []
-        self.type    = "command"
 
     def reply(self, txt):
         "add text to the result"

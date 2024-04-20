@@ -17,14 +17,14 @@ import _thread
 from .errors import later
 
 
-class Worker:
+class Worker(mp.Process):
 
-    queue = mp.Queue()
+    queue = queue.Queue()
 
     @staticmethod
     def put(func, *args, **kwargs):
         "put job on queue."
-        Worker.queue.put_nowait(func, *args, **kwargs)
+        Worker.queue.put_nowait((func, args))
 
     @staticmethod
     def run():
@@ -32,9 +32,10 @@ class Worker:
         while 1:
             try:
                 func, args = Worker.queue.get()
-                self._result = func(*args)
             except KeyboardInterrupt:
                 return
+            try:
+                func(*args)
             except Exception as ex:
                 later(ex)
                 if args:

@@ -10,10 +10,11 @@ import multiprocessing as mp
 import random
 
 
-from .errors import debug
-from .job    import Job
-from .object import Object, values
-from .worker import Worker
+from .client  import command
+from .errors  import debug
+from .job     import Job
+from .object  import Object, keys, values
+from .worker  import Worker
 
 
 rpr = object.__repr__
@@ -21,30 +22,29 @@ rpr = object.__repr__
 
 class Pool:
 
-    procs = Object()
+    workers = Object()
 
     @staticmethod
-    def add(proc):
-        debug(f"adding proces {len(Pool.procs)+1}") 
-        setattr(Pool.procs, rpr(proc), proc)       
+    def add(worker):
+        setattr(Pool.workers, rpr(worker), worker)       
 
     @staticmethod
     def init():
         ctx = mp.get_context("spawn")
-        print(dir(ctx))
         nrs = ctx.cpu_count()
         debug(f"{nrs} cpu detected")
         for nr in range(nrs):
             worker = Worker()
-            process = ctx.Process(target=Worker.run)
-            Pool.add(process)
-            process.start()
+            worker.start()
+            Pool.add(worker)
 
     @staticmethod
     def put(func, *args, **kwargs):
-        for proc in values(Pool.procs):
-            if proc.queue.empty:
-                proc.put(func, *args, **kwargs)
+        for worker in values(Pool.workers):
+            if worker.queue.empty():
+                debug(f"{worker} {func}")
+                worker.put(func, *args, **kwargs)
                 return
-        proc = random.choose(values(procs))
+        prockey = random.choice(keys(Pool.workers))
+        proc = Pool.workers[prockey]
         proc.put(func, *args, **kwargs)
