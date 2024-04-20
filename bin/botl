@@ -28,7 +28,7 @@ from botl.client  import Client, cmnd, parse_cmd, spl
 from botl.command import Command
 from botl.default import Default
 from botl.errors  import debug, enable, errors
-from botl.runtime import broker
+from botl.runtime import broker, pool
 from botl.workdir import Workdir, skel
 
 

@@ -6,47 +6,45 @@
 "pool"
 
 
-from .objects import Object
-from .thread  import create
+import multiprocessing as mp
+import random
 
 
-def rpr = object.__repr__
+from .errors import debug
+from .job    import Job
+from .object import Object, values
+from .worker import Worker
 
 
-class ThreadBroker:
+rpr = object.__repr__
 
 
-    threads = Object()
+class Pool:
 
-    @staticmethod
-    def add(obj):
-        "add an object to the broker."
-        setattr(ThreadBroker.threads, rpr(obj), obj)
-
-    @staticmethod
-    def first():
-        "return first object."
-        for key in keys(self.objs):
-            return getattr(ThreadBroker.threads, key)
+    procs = Object()
 
     @staticmethod
-    def init(nr=6):
-        for _nr in range(nr):
-            ThreadBroker.add(create())
+    def add(proc):
+        debug(f"adding proces {len(Pool.procs)+1}") 
+        setattr(Pool.procs, rpr(proc), proc)       
 
     @staticmethod
-    def get(orig):
-        "return object by origin (repr)"
-        return getattr(ThreadBroker.threads, orig, None)
+    def init():
+        ctx = mp.get_context("spawn")
+        print(dir(ctx))
+        nrs = ctx.cpu_count()
+        debug(f"{nrs} cpu detected")
+        for nr in range(nrs):
+            worker = Worker()
+            process = ctx.Process(target=Worker.run)
+            Pool.add(process)
+            process.start()
 
     @staticmethod
-    def put(evt):
-         for thr in Threadpool.threads:
-             if not thr.busy:
-                 thr.put(evt)
-                 break
-
-    @staticmethod
-    def remove(obj):
-        "remove object from broker"
-        delattr(ThreadBroker.threads, rpr(obj))
+    def put(func, *args, **kwargs):
+        for proc in values(Pool.procs):
+            if proc.queue.empty:
+                proc.put(func, *args, **kwargs)
+                return
+        proc = random.choose(values(procs))
+        proc.put(func, *args, **kwargs)

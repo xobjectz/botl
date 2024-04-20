@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105,W0201,W0212,W0613,E0401,E0402,E0611
+# pylint: disable=C,R,W0105,W0201,W0212,W0613,E0401,E0402,W0611
 # ruff: noqa: E402
 
 
@@ -34,9 +34,10 @@ COPYRIGHT
 
 
 import getpass
+import multiprocessing as mp
 import os
 import pwd
-import readline # pylint: disable=W0611
+import readline
 import sys
 import termios
 import time
@@ -51,7 +52,7 @@ from botl.default import Default
 from botl.errors  import debug, enable, errors
 from botl.event   import Event
 from botl.object  import cdir
-from botl.runtime  import broker
+from botl.runtime import broker, pool
 from botl.workdir import Workdir, skel
 
 
@@ -81,6 +82,7 @@ class Console(Client):
 
     def __init__(self):
         Client.__init__(self)
+        self.register("job", pool.put)
         broker.add(self)
 
     def announce(self, txt):
@@ -187,7 +189,8 @@ def main():
             time.sleep(1.0)
         return
     if "c" in Cfg.opts:
-        init(modules, Cfg.mod)
+        pool.init()
+        #init(modules, Cfg.mod)
         if mods:
             Cfg.mod += "," + ",".join(mods.__dir__())
             init(mods, Cfg.mod)
@@ -211,4 +214,5 @@ def wrapped():
 
 
 if __name__ == "__main__":
+    #mp.set_start_method('spawn', force=True)
     wrapped()
