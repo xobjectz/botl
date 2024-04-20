@@ -34,13 +34,12 @@ COPYRIGHT
 
 
 import getpass
-import multiprocessing as mp
 import os
 import pwd
 import readline
 import sys
 import termios
-import time
+import timek
 
 
 sys.path.insert(0, os.getcwd())
@@ -52,7 +51,7 @@ from botl.default import Default
 from botl.errors  import debug, enable, errors
 from botl.event   import Event
 from botl.object  import cdir
-from botl.runtime import broker, pool
+from botl.runtime import broker
 from botl.workdir import Workdir, skel
 
 
@@ -82,7 +81,6 @@ class Console(Client):
 
     def __init__(self):
         Client.__init__(self)
-        self.register("job", pool.put)
         broker.add(self)
 
     def announce(self, txt):
@@ -189,8 +187,7 @@ def main():
             time.sleep(1.0)
         return
     if "c" in Cfg.opts:
-        pool.init()
-        #init(modules, Cfg.mod)
+        init(modules, Cfg.mod)
         if mods:
             Cfg.mod += "," + ",".join(mods.__dir__())
             init(mods, Cfg.mod)
@@ -214,5 +211,4 @@ def wrapped():
 
 
 if __name__ == "__main__":
-    #mp.set_start_method('spawn', force=True)
     wrapped()

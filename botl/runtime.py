@@ -7,8 +7,6 @@
 
 
 from .broker import Broker
-from .pool   import Pool
 
 
 broker = Broker()
-pool   = Pool()
