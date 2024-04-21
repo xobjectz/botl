@@ -68,7 +68,7 @@ Cfg             = Default()
 Cfg.mod         = "cmd,mod"
 Cfg.opts        = ""
 Cfg.name        = "botl"
-Cfg.version     = "552"
+Cfg.version     = "111"
 Cfg.wd          = os.path.expanduser(f"~/.{Cfg.name}")
 Cfg.pidfile     = os.path.join(Cfg.wd, f"{Cfg.name}.pid")
 Workdir.workdir = Cfg.wd
@@ -126,9 +126,11 @@ def daemon(pidfile, verbose=False):
         fds.write(str(os.getpid()))
 
 
-def init(pkg, modstr):
+def init(pkg, modstr, disable=""):
     mds = []
     for modname in spl(modstr):
+        if skip(modname, disable):
+            continue
         module = getattr(pkg, modname, None)
         if not module:
             continue
@@ -142,6 +144,13 @@ def privileges(username):
     pwnam = pwd.getpwnam(username)
     os.setgid(pwnam.pw_gid)
     os.setuid(pwnam.pw_uid)
+
+
+def skip(name, skipped):
+    for skip in spl(skipped):
+        if skip in name:
+            return True
+    return False
 
 
 def wrap(func):
@@ -187,7 +196,7 @@ def main():
             time.sleep(1.0)
         return
     if "c" in Cfg.opts:
-        init(modules, Cfg.mod)
+        init(modules, Cfg.mod, Cfg.sets.dis)
         if mods:
             Cfg.mod += "," + ",".join(mods.__dir__())
             init(mods, Cfg.mod)
