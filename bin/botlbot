@@ -39,7 +39,7 @@ import pwd
 import readline
 import sys
 import termios
-import timek
+import time
 
 
 sys.path.insert(0, os.getcwd())

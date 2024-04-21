@@ -53,7 +53,6 @@ def cmnd(txt, out):
 def command(bot, evt):
     "check for and run a command."
     parse_cmd(evt)
-    print(evt)
     func = getattr(Command.cmds, evt.cmd, None)
     if func:
         try:
