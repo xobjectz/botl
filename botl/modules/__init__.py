@@ -18,7 +18,6 @@ def __dir__():
        'fnd',
        'irc',
        'log',
-       'man',
        'mbx',
        'mdl',
        'mod',

@@ -147,8 +147,8 @@ def privileges(username):
 
 
 def skip(name, skipped):
-    for skip in spl(skipped):
-        if skip in name:
+    for skp in spl(skipped):
+        if skp in name:
             return True
     return False
 
