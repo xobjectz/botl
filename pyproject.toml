@@ -31,8 +31,6 @@ classifiers = [
 [tool.setuptools]
 script-files = [
     "bin/botl",
-    "bin/botld",
-    "bin/botlbot"
 ]
 packages = [
     "botl",

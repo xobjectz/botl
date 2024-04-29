@@ -4,9 +4,10 @@
 "available modules"
 
 
-from . import __dir__
+import os
 
 
 def mod(event):
     "show available modules."
-    event.reply(",".join(sorted(__dir__())))
+    path = os.path.dirname(__file__)
+    event.reply(",".join(sorted([x[:-3] for x in os.listdir(path) if not x.startswith("__")])))
