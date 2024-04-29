@@ -1,6 +1,4 @@
 # This file is placed in the Public Domain.
-#
-# pylint: disable=C0115,C0116
 
 
 """| **Information and Evidence Unit**
@@ -9,8 +7,9 @@
 | **2500 CM The Hague**
 | **The Netherlands**
 |
+|
 
-Hello Office of the Prosecutor,
+Hello Office of the Prosecutor, ``OTP-CR-117/19``
 
 i write you in the context of communications and claims under art.15 of
 the Rome Statute. i want to inform the prosecutor that the king of the
@@ -79,11 +78,6 @@ p.s.
 """
 
 
-from ..command import Command
-
-
 def req(event):
+    "reconsider"
     event.reply(__doc__)
-
-
-Command.add(req)

@@ -1,9 +1,9 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0613,E0402,W0105
+# pylint: disable=C0209,W0105
 
 
-"genocide model of the netherlands"
+"genocide model of the netherlands since 01-01-2020"
 
 
 import datetime
@@ -21,12 +21,13 @@ from ..thread   import launch
 
 DAY = 24*60*60
 YEAR = 365*DAY
-SOURCE = "https://github.com/bthate/genocide"
+SOURCE = "https://github.com/xobjectz/otpcr"
 STARTDATE = "2020-01-01 00:00:00"
 STARTTIME = time.mktime(time.strptime(STARTDATE, "%Y-%m-%d %H:%M:%S"))
 
 
 def init():
+    "start repeaters"
     for key in keys(oorzaken):
         val = getattr(oorzaken, key, None)
         if val and int(val) > 10000:
@@ -37,7 +38,6 @@ def init():
             repeater = Repeater(sec, cbstats, evt, thrname=aliases.get(key))
             repeater.start()
     launch(daily, name="daily")
-    
 
 
 oor = """"Totaal onderliggende doodsoorzaken (aantal)";
@@ -277,18 +277,23 @@ oorzaken = Object()
 
 
 def getalias(txt):
+    "return value of alias."
+    result = None
     for key, value in aliases.items():
         if txt.lower() in key.lower():
-            return value
-
+            result = value
+            break
+    return result
 
 def getday():
+    "timestamp of current day."
     day = datetime.datetime.now()
     day = day.replace(hour=0, minute=0, second=0, microsecond=0)
     return day.timestamp()
 
 
 def getnr(name):
+    "fetch mortality number."
     for k in keys(oorzaken):
         if name.lower() in k.lower():
             return int(getattr(oorzaken, k))
@@ -296,6 +301,7 @@ def getnr(name):
 
 
 def seconds(nrs):
+    "convert nr/years to seconds."
     if not nrs:
         return nrs
     return 60*60*24*365 / float(nrs)
@@ -303,6 +309,7 @@ def seconds(nrs):
 
 
 def iswanted(k, line):
+    "see whether filtered or not."
     for word in line:
         if word in k:
             return True
@@ -310,6 +317,7 @@ def iswanted(k, line):
 
 
 def daily():
+    "daily job"
     while 1:
         time.sleep(24*60*60)
         evt = Event()
@@ -317,13 +325,15 @@ def daily():
 
 
 def hourly():
+    "hourly job"
     while 1:
         time.sleep(60*60)
         evt = Event()
         cbnow(evt)
 
 
-def cbnow(evt):
+def cbnow(_evt):
+    "now callback"
     delta = time.time() - STARTTIME
     txt = laps(delta) + " "
     for name in sorted(keys(oorzaken), key=lambda x: seconds(getnr(x))):
@@ -331,7 +341,7 @@ def cbnow(evt):
         if needed > 60*60:
             continue
         nrtimes = int(delta/needed)
-        txt += "%s: %s " % (getalias(name), nrtimes)
+        txt += f"{getalias(name)} {nrtimes} |"
     txt += " http://genocide.rtfd.io"
     for bot in values(broker.objs):
         if "announce" in dir(bot):
@@ -339,6 +349,7 @@ def cbnow(evt):
 
 
 def cbstats(evt):
+    "stats callback."
     name = evt.rest or "Psych"
     needed = seconds(getnr(name))
     if needed:
@@ -361,6 +372,7 @@ def cbstats(evt):
 
 
 def now(event):
+    "now command."
     name = event.rest or "Psych"
     needed = seconds(getnr(name))
     if needed:
@@ -389,14 +401,8 @@ Command.add(now)
 "interface"
 
 
-def __dir__():
-    return (
-            'init',
-            'now'
-           ) 
-
-
 def boot():
+    "construct model"
     _nr = -1
     for key in keys(oorzaak):
         _nr += 1
@@ -424,6 +430,13 @@ def boot():
         nms = " ".join(atl.split()[1:]).capitalize()
         nms = nms.strip()
         setattr(oorzaken, nms, aantal[_nr])
+
+
+def __dir__():
+    return (
+            'init',
+            'now'
+           )
 
 
 boot()

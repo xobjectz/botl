@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0212,E0402
+# pylint: disable=C,R
 
 
 "mailbox"
@@ -11,12 +11,11 @@ import os
 import time
 
 
-from ..object  import Object, fmt, update
-from ..client  import laps
-from ..command import Command
-from ..find    import find, fntime
-from ..persist import whitelist
-from ..workdir import sync
+from ..object    import Object, fmt, update
+from ..client    import laps
+from ..find      import find, fntime
+from ..whitelist import whitelist
+from ..workdir   import sync
 
 
 MONTH = {
@@ -37,6 +36,8 @@ MONTH = {
 
 class Email(Object):
 
+    "Email"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text = ""
@@ -46,6 +47,7 @@ whitelist(Email)
 
 
 def to_date(date):
+    "match date in string." 
     date = date.replace("_", ":")
     res = date.split()
     ddd = ""
@@ -82,6 +84,7 @@ def to_date(date):
 
 
 def cor(event):
+    "correspondence"
     if not event.args:
         event.reply("cor <email>")
         return
@@ -96,10 +99,8 @@ def cor(event):
         event.reply("%s %s %s" % (nr, fmt(email, txt, plain=True), laps(time.time() - fntime(email.__stp__))))
 
 
-Command.add(cor)
-
-
 def eml(event):
+    "emnail"
     if not event.args:
         event.reply("eml <searchtxtinemail>")
         return
@@ -110,10 +111,8 @@ def eml(event):
             event.reply("%s %s %s" % (nr, fmt(o, "From,Subject"), laps(time.time() - fntime(fn))))
 
 
-Command.add(eml)
-
-
 def mbx(event):
+    "mailbox"
     if not event.args:
         return
     fn = os.path.expanduser(event.args[0])
@@ -131,7 +130,7 @@ def mbx(event):
         pass
     for m in thing:
         o = Email()
-        update(o, m._headers)
+        update(o, m._headers) # pylint: disable=W0212
         o.text = ""
         for payload in m.walk():
             if payload.get_content_type() == 'text/plain':
@@ -141,6 +140,3 @@ def mbx(event):
         nr += 1
     if nr:
         event.reply("ok %s" % nr)
-
-
-Command.add(mbx)

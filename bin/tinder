@@ -24,17 +24,12 @@ from botl.default import Default
 from botl.errors  import errors
 from botl.event   import Event
 from botl.object  import Object, keys
+from botl.runtime import dte, init, scan
 from botl.thread  import launch
 from botl.workdir import Workdir
 
 
 from botl import modules
-
-
-if os.path.exists("mods"):
-    import files as mods
-else:
-    mods = None
 
 
 LAP = 1
@@ -147,6 +142,7 @@ def wrap(func):
 
 def main():
     "main"
+    scan(modules, Cfg.mod)
     nrs = Cfg.index or 1
     nrcommand = len(Command.cmds) or 1
     thrs = []
@@ -168,8 +164,6 @@ if __name__ == "__main__":
     dte = time.ctime(time.time()).replace("  ", " ")
     cprint(f"{Cfg.name.upper()} {Cfg.opts.upper()} started {dte}")
     Cfg.mod =  ",".join(modules.__dir__())
-    if mods:
-        Cfg.mod += ",".join(mods.__dir__())
     if "p" in Cfg.opts:
         profile.runctx(main.__code__, globals(), locals())
     else:

@@ -1,19 +1,17 @@
 # This file is placed in the Public Domain.
-#
-# pylint: disable=C,R,W0611,E0402
 
 
 "locate"
 
 
-from ..command import Command
-from ..find    import find
-from ..object  import fmt
-from ..persist import long
-from ..workdir import liststore, skel
+from ..find      import find
+from ..object    import fmt
+from ..whitelist import long
+from ..workdir   import liststore, skel
 
 
 def fnd(event):
+    "locate objects."
     skel()
     if not event.rest:
         res = sorted([x.split('.')[-1].lower() for x in liststore()])
@@ -33,6 +31,3 @@ def fnd(event):
         nmr += 1
     if not nmr:
         event.reply("no result")
-
-
-#Command.add(fnd)
