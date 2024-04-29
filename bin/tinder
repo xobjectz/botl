@@ -39,13 +39,19 @@ PERCALL = 1
 STARTTIME = time.time()
 
 
+path = os.path.dirname(modules.__file__)
+
+
 Cfg             = Default()
 Cfg.debug       = True
+Cfg.mod         = ",".join(sorted([x[:-3] for x in os.listdir(path) if not x.startswith("__")]))
 Cfg.name        = "tinder"
 Cfg.silent      = False
 Cfg.skip        = ["debug",]
 Cfg.version     = "110"
 Cfg.wd          = ".test"
+
+
 Workdir.workdir = Cfg.wd
 
 
@@ -161,9 +167,7 @@ def main():
 
 if __name__ == "__main__":
     parse_cmd(Cfg, " ".join(sys.argv[1:]))
-    dte = time.ctime(time.time()).replace("  ", " ")
     cprint(f"{Cfg.name.upper()} {Cfg.opts.upper()} started {dte}")
-    Cfg.mod =  ",".join(modules.__dir__())
     if "p" in Cfg.opts:
         profile.runctx(main.__code__, globals(), locals())
     else:
