@@ -51,6 +51,7 @@ class Thread(threading.Thread):
 def launch(func, *args, **kwargs):
     "launch a thread."
     nme = kwargs.get("name", name(func))
+    print(nme)
     thread = Thread(func, nme, *args, **kwargs)
     thread.start()
     return thread

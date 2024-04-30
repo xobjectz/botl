@@ -1,6 +1,4 @@
 # This file is placed in the Public Domain.
-#
-# pylint: disable=C0209,W0105
 
 
 "genocide model of the netherlands since 01-01-2020"
@@ -393,9 +391,6 @@ def now(event):
         event.reply(txt)
     else:
         event.reply("not needed")
-
-
-Command.add(now)
 
 
 "interface"

@@ -21,6 +21,14 @@ SYNOPSIS
     -v     use verbose
 
 
+INSTALL
+
+::
+
+    $ pipx install botl
+    $ pipx ensurepath
+
+
 DESCRIPTION
 
 ::
@@ -48,6 +56,33 @@ DESCRIPTION
     presence in a IRC channel.
 
     BOTL is Public Domain.
+
+
+CONFIGURATION
+
+::
+
+    $ botl cfg 
+    channel=#botl commands=True nick=botl port=6667 server=localhost
+
+    irc
+
+    $ botl cfg server=<server>
+    $ botl cfg channel=<channel>
+    $ botl cfg nick=<nick>
+
+    sasl
+
+    $ botl pwd <nsvnick> <nspass>
+    $ botl cfg password=<frompwd>
+
+    rss
+
+    $ botl rss <url>
+    $ botl dpl <url> <item1,item2>
+    $ botl rem <url>
+    $ botl nme <url> <name>
+
 
 USAGE
 
@@ -83,31 +118,6 @@ USAGE
     BOTL started CV started Sat Dec 2 17:53:24 2023
     >
 
-
-CONFIGURATION
-
-::
-
-    $ botl cfg 
-    channel=#botl commands=True nick=botl port=6667 server=localhost
-
-    irc
-
-    $ botl cfg server=<server>
-    $ botl cfg channel=<channel>
-    $ botl cfg nick=<nick>
-
-    sasl
-
-    $ botl pwd <nsvnick> <nspass>
-    $ botl cfg password=<frompwd>
-
-    rss
-
-    $ botl rss <url>
-    $ botl dpl <url> <item1,item2>
-    $ botl rem <url>
-    $ botl nme <url> <name>
 
 COMMANDS
 

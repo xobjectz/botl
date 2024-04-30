@@ -1,6 +1,4 @@
 # This file is placed in the Public Domain.
-#
-#
 
 
 """| wijsheid, wijs !
@@ -189,15 +187,9 @@
 from random import SystemRandom
 
 
-from ..command import Command
-
-
 rand = SystemRandom()
 
 
 def wsd(event):
     "show wisdom."
     event.reply(rand.choice(__doc__.split("\n")).strip()[2:])
-
-
-Command.add(wsd)

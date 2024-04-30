@@ -22,7 +22,7 @@ from botl.default import Default
 from botl.errors  import debug, enable, errors
 from botl.event   import Event
 from botl.object  import cdir
-from botl.runtime import broker, dte, init, scan
+from botl.runtime import broker, dte, init, mods, scan
 from botl.workdir import Workdir, skel
 
 
@@ -37,6 +37,8 @@ Cfg.name        = __file__.split(os.sep)[-1]
 Cfg.version     = "120"
 Cfg.wdr         = os.path.expanduser(f"~/.{Cfg.name}")
 Cfg.pidfile     = os.path.join(Cfg.wdr, f"{Cfg.name}.pid")
+
+
 Workdir.workdir = Cfg.wdr
 
 
@@ -127,14 +129,14 @@ def main():
     if Cfg.sets.dis:
         Cfg.dis += "," + Cfg.sets.dis
     if "a" in Cfg.opts:
-        Cfg.mod = ",".join(modules.__dir__())
+        Cfg.mod = mods
     if "v" in Cfg.opts:
         debug(f"{Cfg.name.upper()} {Cfg.opts.upper()} started {dte}")
     scan(modules, Cfg.mod, Cfg.dis)
     if "h" in Cfg.opts:
         print(__doc__)
     elif "d" in Cfg.opts:
-        Cfg.mod = ",".join(modules.__dir__())
+        Cfg.mod  = mods
         Cfg.user = getpass.getuser()
         daemon(Cfg.pidfile, "v" in Cfg.opts)
         privileges(Cfg.user)

@@ -29,7 +29,7 @@ class Handler:
         if not func:
             evt.ready()
             return
-        evt._thr = launch(func, self, evt) # pylint: disable=W0212
+        evt._thr = launch(func, self, evt, name=evt.txt.split()[0]) # pylint: disable=W0212
 
     def loop(self):
         "proces events until interrupted."
