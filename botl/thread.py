@@ -62,6 +62,8 @@ def name(obj):
     typ = type(obj)
     if isinstance(typ, types.ModuleType):
         return obj.__name__
+    if isinstance(typ, types.FunctionType):
+        return obj.__name__
     if '__self__' in dir(obj):
         return f'{obj.__self__.__class__.__name__}.{obj.__name__}'
     if '__class__' in dir(obj) and '__name__' in dir(obj):
