@@ -4,10 +4,10 @@
 "locate"
 
 
-from ..find      import find
-from ..object    import fmt
-from ..whitelist import long
-from ..workdir   import liststore, skel
+from botl.find      import find
+from botl.object    import fmt
+from botl.whitelist import long
+from botl.workdir   import liststore, skel
 
 
 def fnd(event):

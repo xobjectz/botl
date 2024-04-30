@@ -9,14 +9,14 @@ import re
 import time as ttime
 
 
-from ..client    import laps
-from ..event     import Event
-from ..find      import find
-from ..object    import update
-from ..runtime   import broker
-from ..thread    import launch
-from ..timer     import Timer
-from ..workdir   import sync
+from botl.client    import laps
+from botl.event     import Event
+from botl.find      import find
+from botl.object    import update
+from botl.runtime   import broker
+from botl.thread    import launch
+from botl.timer     import Timer
+from botl.workdir   import sync
 
 
 def init():

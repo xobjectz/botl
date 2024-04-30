@@ -16,14 +16,14 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from ..client     import laps, spl
-from ..default    import Default
-from ..find       import find, fntime, last
-from ..object     import Object, fmt, update, values
-from ..repeater   import Repeater
-from ..runtime    import broker
-from ..thread     import launch
-from ..workdir    import sync
+from botl.client     import laps, spl
+from botl.default    import Default
+from botl.find       import find, fntime, last
+from botl.object     import Object, fmt, update, values
+from botl.repeater   import Repeater
+from botl.runtime    import broker
+from botl.thread     import launch
+from botl.workdir    import sync
 
 
 def init():

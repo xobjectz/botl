@@ -11,9 +11,9 @@ import threading
 import time
 
 
-from ..object  import Object, values
-from ..thread  import launch
-from ..runtime import broker
+from botl.object  import Object, values
+from botl.thread  import launch
+from botl.runtime import broker
 
 
 def init():

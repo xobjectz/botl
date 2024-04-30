@@ -15,10 +15,14 @@ from .command   import scan as scancmd
 from .whitelist import scan as scancls
 
 
-broker = Broker()
-dte    = time.ctime(time.time()).replace("  ", " ")
-path   = os.path.join(os.path.dirname(__file__), "modules")
-mods   = ",".join(sorted([x[:-3] for x in os.listdir(path) if not x.startswith("__")]))
+broker  = Broker()
+dte     = time.ctime(time.time()).replace("  ", " ")
+path    = os.path.join(os.path.dirname(__file__), "modules")
+
+
+def modlist(path):
+    "return list of modules in a directory."
+    return ",".join(sorted([x[:-3] for x in os.listdir(path) if not x.startswith("__")]))
 
 
 def init(pkg, modstr, disable=""):

@@ -24,7 +24,7 @@ from botl.default import Default
 from botl.errors  import errors
 from botl.event   import Event
 from botl.object  import Object, keys
-from botl.runtime import dte, init, mods, scan
+from botl.runtime import dte, init, modlist, scan
 from botl.thread  import launch
 from botl.workdir import Workdir
 
@@ -44,7 +44,7 @@ path = os.path.dirname(modules.__file__)
 
 Cfg             = Default()
 Cfg.debug       = True
-Cfg.mod         = mods
+Cfg.mod         = modlist(path)
 Cfg.name        = "tinder"
 Cfg.silent      = False
 Cfg.skip        = ["debug",]
@@ -53,6 +53,12 @@ Cfg.wd          = ".test"
 
 
 Workdir.workdir = Cfg.wd
+
+
+if os.path.exists("mods"):
+    import mods
+else:
+    mods = None
 
 
 events = []
@@ -149,6 +155,9 @@ def wrap(func):
 def main():
     "main"
     scan(modules, Cfg.mod)
+    if mods:
+        Cfg.mod = "," + modlist("mods")
+    scan(mods, Cfg.mod)
     nrs = Cfg.index or 1
     nrcommand = len(Command.cmds) or 1
     thrs = []

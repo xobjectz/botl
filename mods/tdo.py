@@ -7,10 +7,10 @@
 import time
 
 
-from ..client    import laps
-from ..object    import Object
-from ..find      import fntime, find
-from ..workdir   import sync
+from botl.client    import laps
+from botl.object    import Object
+from botl.find      import fntime, find
+from botl.workdir   import sync
 
 
 class NoDate(Exception): # pylint: disable=R0903
