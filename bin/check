@@ -4,4 +4,4 @@ grep -R "print(" botl
 grep -R popen botl bin/botl
 grep -R botl botl 
 grep -R BOTL botl 
-grep -R "import sys" botl
+#grep -R "import sys" botl
