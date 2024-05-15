@@ -9,15 +9,13 @@ SYNOPSIS
 
 ::
 
-    botl <cmd> [key=val] [key==val]
-    botl [-a] [-c] [-d] [-h] [-v]
+    botl  <cmd> [key=val] [key==val]
+    botl  [-c] [-v]
+    botld 
 
     options are:
 
-    -a     load all modules
     -c     start console
-    -d     start daemon
-    -h     display help
     -v     use verbose
 
 
@@ -153,7 +151,7 @@ SYSTEMD
     User=<user>
     Group=<user>
     WorkingDirectory=/home/<user>/.botl
-    ExecStart=/home/<user>/.local/pipx/venvs/botl/bin/botl -d
+    ExecStart=/home/<user>/.local/pipx/venvs/botl/bin/botld
     RemainAfterExit=yes
 
     [Install]
@@ -172,6 +170,7 @@ FILES
 
     ~/.botl
     ~/.local/bin/botl
+    ~/.local/bin/botld
     ~/.local/pipx/venvs/botl/
 
 AUTHOR

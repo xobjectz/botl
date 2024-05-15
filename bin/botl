@@ -98,8 +98,6 @@ def main():
         enable(print)
         dte = " ".join(time.ctime(time.time()).replace("  ", " ").split()[1:])
         debug(f'{dte} {Cfg.name.upper()} {Cfg.opts.upper()} {Cfg.mod.upper()}')
-    if "h" in Cfg.opts:
-        print(__doc__)
     scan(modules, Cfg.mod, Cfg.sets.dis)
     if "c" in Cfg.opts:
         init(modules, Cfg.mod, Cfg.sets.dis)
