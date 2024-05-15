@@ -1,4 +1,6 @@
 # This file is placed in the Public Domain.
+#
+# pylint: disable=C0209
 
 
 "genocide model of the netherlands since 01-01-2020"
@@ -8,10 +10,11 @@ import datetime
 import time
 
 
-from ..client import Command, laps
-from ..object import Object, construct, keys, values
-from ..run    import broker
-from ..thread import Repeater, launch
+from ..client  import laps
+from ..handler import Event
+from ..object  import Object, construct, keys, values
+from ..run     import broker
+from ..thread  import Repeater, launch
 
 
 DAY = 24*60*60
@@ -388,9 +391,6 @@ def now(event):
         event.reply(txt)
     else:
         event.reply("not needed")
-
-
-"interface"
 
 
 def boot():
