@@ -10,4 +10,11 @@ import os
 def mod(event):
     "show available modules."
     path = os.path.dirname(__file__)
-    event.reply(",".join(sorted([x[:-3] for x in os.listdir(path) if not x.startswith("__")])))
+    mods = []
+    for mdd in os.listdir(path):
+        if mdd.startswith("__"):
+            continue
+        if mdd.endswith("~"):
+            continue
+        mods.append(mdd[:-3])
+    event.reply(",".join(sorted(mods)))

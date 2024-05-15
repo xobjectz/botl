@@ -7,10 +7,10 @@
 import time
 
 
-from botl.client    import laps
-from botl.object    import Object
-from botl.find      import find, fntime
-from botl.workdir   import sync
+from ..client import laps
+from ..disk   import sync
+from ..find   import find, fntime
+from ..object import Object
 
 
 class Log(Object): # pylint: disable=R0903

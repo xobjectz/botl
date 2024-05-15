@@ -11,11 +11,10 @@ import os
 import time
 
 
-from botl.object    import Object, fmt, update
-from botl.client    import laps
-from botl.find      import find, fntime
-from botl.whitelist import whitelist
-from botl.workdir   import sync
+from ..disk   import sync, whitelist
+from ..object import Object, fmt, update
+from ..client import laps
+from ..find   import find, fntime
 
 
 MONTH = {

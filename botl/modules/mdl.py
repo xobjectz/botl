@@ -8,13 +8,10 @@ import datetime
 import time
 
 
-from botl.client   import laps
-from botl.command  import Command
-from botl.event    import Event
-from botl.object   import Object, construct, keys, values
-from botl.repeater import Repeater
-from botl.runtime  import broker
-from botl.thread   import launch
+from ..client import Command, laps
+from ..object import Object, construct, keys, values
+from ..run    import broker
+from ..thread import Repeater, launch
 
 
 DAY = 24*60*60

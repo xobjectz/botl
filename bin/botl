@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
+#
+# pylint: disable=C0413
 
 
 "main"
 
 
-import getpass
 import os
-import pwd
 import readline
 import sys
 import termios
@@ -17,13 +17,13 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from botl.client  import Client, cmnd, parse_cmd
-from botl.default import Default
-from botl.errors  import debug, enable, errors
-from botl.event   import Event
-from botl.object  import cdir
-from botl.runtime import broker, dte, init, modlist, scan
-from botl.workdir import Workdir, skel
+from botl.client  import Client, cmnd, parse
+from botl.disk    import Workdir, skel
+from botl.handler import Event
+from botl.log     import debug, enable
+from botl.object  import Default
+from botl.run     import broker, init, scan
+from botl.thread  import errors, setout
 
 
 from botl import modules
@@ -31,24 +31,15 @@ from botl import modules
 
 Cfg             = Default()
 Cfg.dis         = ""
-Cfg.mod         = "cmd,mod"
+Cfg.mod         = "cmd,err,log,mod,tdo,thr,tmr"
 Cfg.opts        = ""
-Cfg.name        = __file__.split(os.sep)[-1]
+Cfg.name        = __file__.rsplit(os.sep, maxsplit=1)[-1]
 Cfg.version     = "120"
 Cfg.wdr         = os.path.expanduser(f"~/.{Cfg.name}")
 Cfg.pidfile     = os.path.join(Cfg.wdr, f"{Cfg.name}.pid")
 
 
 Workdir.workdir = Cfg.wdr
-
-
-if os.path.exists("mods"):
-    import mods
-else:
-    mods = None
-
-
-path = os.path.dirname(modules.__file__)
 
 
 class Console(Client):
@@ -81,39 +72,6 @@ class Console(Client):
         print(txt)
 
 
-def daemon(pidfile, verbose=False):
-    "switch to background."
-    # pylint: disable=W0212
-    pid = os.fork()
-    if pid != 0:
-        os._exit(0)
-    os.setsid()
-    pid2 = os.fork()
-    if pid2 != 0:
-        os._exit(0)
-    if not verbose:
-        with open('/dev/null', 'r', encoding="utf-8") as sis:
-            os.dup2(sis.fileno(), sys.stdin.fileno())
-        with open('/dev/null', 'a+', encoding="utf-8") as sos:
-            os.dup2(sos.fileno(), sys.stdout.fileno())
-        with open('/dev/null', 'a+', encoding="utf-8") as ses:
-            os.dup2(ses.fileno(), sys.stderr.fileno())
-    os.umask(0)
-    os.chdir("/")
-    if os.path.exists(pidfile):
-        os.unlink(pidfile)
-    cdir(os.path.dirname(pidfile))
-    with open(pidfile, "w", encoding="utf-8") as fds:
-        fds.write(str(os.getpid()))
-
-
-def privileges(username):
-    "drop privileges."
-    pwnam = pwd.getpwnam(username)
-    os.setgid(pwnam.pw_gid)
-    os.setuid(pwnam.pw_uid)
-
-
 def wrap(func):
     "restore console."
     old2 = None
@@ -132,33 +90,20 @@ def wrap(func):
 
 def main():
     "main"
-    enable(print)
+    setout(print)
+    parse(Cfg, " ".join(sys.argv[1:]))
     skel()
-    parse_cmd(Cfg, " ".join(sys.argv[1:]))
-    if Cfg.sets.dis:
-        Cfg.dis += "," + Cfg.sets.dis
-    if "a" in Cfg.opts:
-        Cfg.mod = modlist(path)
+    Cfg.mod = ",".join(modules.__dir__())
     if "v" in Cfg.opts:
-        debug(f"{Cfg.name.upper()} {Cfg.opts.upper()} started {dte}")
-    scan(modules, Cfg.mod, Cfg.dis)
-    if mods:
-        Cfg.mod += "," +  modlist(path)
-        scan(mods, Cfg.mod, Cfg.dis)
+        enable(print)
+        dte = " ".join(time.ctime(time.time()).replace("  ", " ").split()[1:])
+        debug(f'{dte} {Cfg.name.upper()} {Cfg.opts.upper()} {Cfg.mod.upper()}')
     if "h" in Cfg.opts:
         print(__doc__)
-    elif "d" in Cfg.opts:
-        Cfg.mod  = modlist(path)
-        Cfg.user = getpass.getuser()
-        daemon(Cfg.pidfile, "v" in Cfg.opts)
-        privileges(Cfg.user)
-        init(modules, Cfg.mod, Cfg.dis)
-        while 1:
-            time.sleep(1.0)
-    elif "c" in Cfg.opts:
+    scan(modules, Cfg.mod, Cfg.sets.dis)
+    if "c" in Cfg.opts:
+        init(modules, Cfg.mod, Cfg.sets.dis)
         csl = Console()
-        init(modules, Cfg.mod, Cfg.dis)
-        init(mods, Cfg.mod, Cfg.dis)
         csl.start()
         while 1:
             time.sleep(1.0)

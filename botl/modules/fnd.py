@@ -4,10 +4,9 @@
 "locate"
 
 
-from botl.find      import find
-from botl.object    import fmt
-from botl.whitelist import long
-from botl.workdir   import liststore, skel
+from ..find   import find
+from ..object import fmt
+from ..disk   import lsstore, long, skel
 
 
 def fnd(event):

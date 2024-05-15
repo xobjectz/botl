@@ -1,4 +1,6 @@
 # This file is placed in the Public Domain.
+#
+# pylint: disable=C0115,C0116,W0105,E0402,R0903
 
 
 "udp to irc relay"
@@ -11,21 +13,20 @@ import threading
 import time
 
 
-from botl.object  import Object, values
-from botl.thread  import launch
-from botl.runtime import broker
+from ..log    import debug
+from ..object import Object, fmt
+from ..run    import broker
+from ..thread import launch
 
 
 def init():
-    "start udp to irc relay."
     udpd = UDP()
     udpd.start()
+    debug(f"started udp {fmt(Cfg)}")
     return udpd
 
 
-class Cfg(Object): # pylint: disable=R0903
-
-    "Cfg"
+class Cfg(Object):
 
     addr = ""
     host = "localhost"
@@ -33,8 +34,6 @@ class Cfg(Object): # pylint: disable=R0903
 
 
 class UDP(Object):
-
-    "UDP"
 
     def __init__(self):
         Object.__init__(self)
@@ -47,14 +46,12 @@ class UDP(Object):
         self.ready = threading.Event()
 
     def output(self, txt, addr=None):
-        "output to fleet."
         if addr:
             Cfg.addr = addr
-        for bot in values(broker.objs):
+        for bot in broker.all():
             bot.announce(txt.replace("\00", ""))
 
     def loop(self):
-        "udp input loop."
         try:
             self._sock.bind((Cfg.host, Cfg.port))
         except socket.gaierror:
@@ -70,7 +67,6 @@ class UDP(Object):
             self.output(data, addr)
 
     def exit(self):
-        "stop relay."
         self.stopped = True
         self._sock.settimeout(0.01)
         self._sock.sendto(
@@ -79,21 +75,18 @@ class UDP(Object):
                          )
 
     def start(self):
-        "start relay."
         launch(self.loop)
 
 
 def toudp(host, port, txt):
-    "send udp packet to bot."
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(bytes(txt.strip(), "utf-8"), (host, port))
 
 
 def udp(event):
-    "send udp command."
     if event.rest:
         toudp(Cfg.host, Cfg.port, event.rest)
-        event.reply(f"{len(event.rest)} characters sent")
+        debug(f"{len(event.rest)} characters sent")
         return
     if not select.select(
                          [sys.stdin, ],

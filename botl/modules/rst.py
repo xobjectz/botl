@@ -1,4 +1,6 @@
 # This file is placed in the Public Domain.
+#
+# pylint: disable=C,R,W0612,W0613
 
 
 "rest"
@@ -12,43 +14,35 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from botl.default import Default
-from botl.errors  import debug, later
-from botl.find    import fns
-from botl.object  import Object
-from botl.thread  import launch
-from botl.workdir import Workdir
+from ..find   import fns
+from ..log    import debug
+from ..object import Default, Object, fmt
+from ..thread import later, launch
+from ..disk   import Workdir
 
 
 def init():
-    "start object server."
-    result = None
-    try:
-        result = REST((Config.hostname, int(Config.port)), RESTHandler)
-    except OSError:
-        pass
-    if result:
-        launch(result.start)
-    return result
+    rest = REST((Config.hostname, int(Config.port)), RESTHandler)
+    launch(rest.start)
+    debug(f"started {fmt(Config)}")
+    return rest
+
+
+def html(txt):
+    return """<!doctype html>
+<html>
+   %s
+</html>
+""" % txt
 
 
 class Config(Default):
 
-    "Config"
-
     hostname = "localhost"
     port     = 10102
 
-    def __bla__(self):
-        pass
-
-    def __blabla__(self):
-        pass
-
 
 class REST(HTTPServer, Object):
-
-    "REST"
 
     allow_reuse_address = True
     daemon_thread = True
@@ -62,76 +56,62 @@ class REST(HTTPServer, Object):
         self._status = "start"
 
     def exit(self):
-        "shutdown server."
         self._status = ""
         time.sleep(0.2)
         self.shutdown()
 
-    def start(self):
-        "start server/"
+    def start(self): 
         self._status = "ok"
         self.serve_forever()
 
     def request(self):
-        "handler request."
         self._last = time.time()
 
     def error(self, request, addr):
-        "handle error."
-        exctype, excvalue, _tb = sys.exc_info()
+        exctype, excvalue, tb = sys.exc_info()
         exc = exctype(excvalue)
         later(exc)
-        if request:
-            debug(f'{addr} {excvalue}')
+        debug('%s %s' % (addr, excvalue))
 
 
 class RESTHandler(BaseHTTPRequestHandler):
 
-    "RESTHandler"
-
     def setup(self):
-        "setup request."
         BaseHTTPRequestHandler.setup(self)
         self._ip = self.client_address[0]
         self._size = 0
 
     def send(self, txt):
-        "send text."
         self.wfile.write(bytes(txt, "utf-8"))
         self.wfile.flush()
 
     def write_header(self, htype='text/plain'):
-        "write a header."
         self.send_response(200)
-        self.send_header('Content-type', f'{htype}; charset="utf-8"')
+        self.send_header('Content-type', '%s; charset=%s ' % (htype, "utf-8"))
         self.send_header('Server', "1")
         self.end_headers()
 
-    def do_GET(self): # pylint: disable=C0103
-        "handle GET."
+    def do_GET(self):
+        if "favicon" in self.path:
+            return
         if self.path == "/":
             self.write_header("text/html")
             txt = ""
             for fnm in fns():
-                txt += f'<a href="http://{Config.hostname}:{Config.port}/{fnm}">{fnm}</a>\n'
+                txt += f'<a href="http://{Config.hostname}:{Config.port}/{fnm}">{fnm}</a><br>\n'
             self.send(html(txt.strip()))
             return
         fnm = Workdir.workdir + os.sep + "store" + os.sep + self.path
         try:
-            with open(fnm, "r", encoding="utf-8") as file:
-                txt = file.read()
-                self.write_header("txt/plain")
-                self.send(html(txt))
+            f = open(fnm, "r", encoding="utf-8")
+            txt = f.read()
+            f.close()
+            self.write_header("txt/plain")
+            self.send(html(txt))
         except (TypeError, FileNotFoundError, IsADirectoryError) as ex:
             self.send_response(404)
             later(ex)
             self.end_headers()
 
     def log(self, code):
-        "log access."
-        debug(f"{self.address_string()} code {code} path {self.path}")
-
-
-def html(txt):
-    "html template."
-    return f"<!doctype html><html>{txt}</html>"
+        debug('%s code %s path %s' % (self.address_string(), code, self.path))
