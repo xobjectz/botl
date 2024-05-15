@@ -18,15 +18,13 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
-from botl.client  import Client, laps, parse_cmd
-from botl.command import Command
-from botl.default import Default
-from botl.errors  import errors
-from botl.event   import Event
-from botl.object  import Object, keys
-from botl.runtime import dte, init, modlist, scan
-from botl.thread  import launch
-from botl.workdir import Workdir
+from botl.client  import Client, Command, laps, parse
+from botl.disk    import Workdir
+from botl.handler import Event
+from botl.log     import debug, enable
+from botl.object  import Default, Object, keys
+from botl.run     import scan
+from botl.thread  import errors, launch
 
 
 from botl import modules
@@ -44,21 +42,15 @@ path = os.path.dirname(modules.__file__)
 
 Cfg             = Default()
 Cfg.debug       = True
-Cfg.mod         = modlist(path)
+Cfg.mod         = ""
 Cfg.name        = "tinder"
 Cfg.silent      = False
 Cfg.skip        = ["debug",]
 Cfg.version     = "110"
-Cfg.wd          = ".test"
+Cfg.wdr         = ".test"
 
 
-Workdir.workdir = Cfg.wd
-
-
-if os.path.exists("mods"):
-    import mods
-else:
-    mods = None
+Workdir.workdir = Cfg.wdr
 
 
 events = []
@@ -94,7 +86,7 @@ class CLI(Client):
 
     def raw(self, txt):
         "print to screen."
-        cprint(txt)
+        print(txt)
 
 
 def consume(evts):
@@ -112,10 +104,9 @@ def consume(evts):
     return res
 
 
-def cprint(txt):
-    "flush on print."
-    print(txt.encode('utf-8', 'replace').decode())
-    sys.stdout.flush()
+def lsmod(pth):
+    "return list of modules in a directory."
+    return ",".join(sorted([x[:-3] for x in os.listdir(pth) if not x.startswith("__") and not x.endswith("~")]))
 
 
 def payload(clt):
@@ -155,9 +146,6 @@ def wrap(func):
 def main():
     "main"
     scan(modules, Cfg.mod)
-    if mods:
-        Cfg.mod = "," + modlist("mods")
-    scan(mods, Cfg.mod)
     nrs = Cfg.index or 1
     nrcommand = len(Command.cmds) or 1
     thrs = []
@@ -175,8 +163,11 @@ def main():
 
 
 if __name__ == "__main__":
-    parse_cmd(Cfg, " ".join(sys.argv[1:]))
-    cprint(f"{Cfg.name.upper()} {Cfg.opts.upper()} started {dte}")
+    parse(Cfg, " ".join(sys.argv[1:]))
+    Cfg.mod = lsmod(path)
+    enable(print)
+    dte = " ".join(time.ctime(time.time()).replace("  ", " ").split()[1:])
+    debug(f'{dte} {Cfg.name.upper()} {Cfg.opts.upper()} {Cfg.mod.upper()}')
     if "p" in Cfg.opts:
         profile.runctx(main.__code__, globals(), locals())
     else:
